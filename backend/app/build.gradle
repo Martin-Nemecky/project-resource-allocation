@@ -9,7 +9,11 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id "org.springframework.boot" version "2.7.7"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
+
+def optaplannerVersion = "8.35.0.Final"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -17,6 +21,16 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-rest"
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // Optaplanner
+    implementation platform("org.optaplanner:optaplanner-bom:${optaplannerVersion}")
+    implementation "org.optaplanner:optaplanner-spring-boot-starter"
+    testImplementation("org.optaplanner:optaplanner-test")
+
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
@@ -26,7 +40,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'backend.App'
+    mainClass = 'backend.project_allocation.App'
 }
 
 tasks.named('test') {
