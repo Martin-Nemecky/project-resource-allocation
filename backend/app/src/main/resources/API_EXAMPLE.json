@@ -1,0 +1,37 @@
+{
+  "skills" : [{"id" : 1, "name" : "Java"},  {"id" : 2, "name" : "React"}],
+
+  "projects" : [
+      {"name" : "P1", "deadline" : "2024-07-21", "stages" : [
+          {"name" : "S1", "rank" : 1, "isIndependent" : false, "tasks" : [
+              {"id" : 2, "startingDate" : null, "durationInWeeks" : 10, "requiredCapacity" : 0.5, "requiredCompetences" : [{"skillId" : 1, "skillLevel" : "senior"}]},
+              {"id" : 3, "startingDate" : "2023-07-21", "durationInWeeks" : 4, "requiredCapacity" : 0.75, "requiredCompetences" : [{"skillId" : 2, "skillLevel" : "junior"}]}
+            ]
+          },
+          {"name" : "Other", "rank" : 2, "isIndependent" : true, "tasks" : []}
+        ]
+      }
+  ],
+
+  "employees" : [
+      {"firstname" : "John", "lastname" : "Smith", "competences" : [{"skillId" : 2, "skillLevel" : "junior"}], "employmentCapacity" : 1.0, "preferredTasks" : [2], "availability" : {"start" : "2022-01-01", "end" : "2023-01-01"}, "assignedTaskIds" : [3]}
+  ],
+
+  "configuration" : {
+      "numberOfWeeks" : 26,
+      "employeePossibleCapacityOverheadInFTE" : 0.2,
+      "constraintParams" : {
+        "skillWeight" : 10,
+        "hardUtilizationWeight" : 10,
+        "projectStageWeight" : 10,
+        "availabilityWeight" : 10,
+        "unassignedTaskWeight" : 10,
+        "skillLevelWeight" : 10,
+        "softUtilizationWeight" : 10,
+        "taskDelayWeight" : 10,
+        "deadlineWeight" : 10,
+        "preferenceWeight" : 10,
+        "freeWeekWeight" : 10
+      }
+  }
+}
