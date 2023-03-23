@@ -1,4 +1,4 @@
-package backend.project_allocation.solver;
+package backend.project_allocation.solver.constraints;
 
 import backend.project_allocation.domain.*;
 import backend.project_allocation.domain.other.Pair;
@@ -138,8 +138,6 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                 .asConstraint("Soft utilization conflict");
     }
 
-    //TODO
-
     protected Constraint skillLevelConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Task.class)
@@ -216,10 +214,11 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                             Set<Task> assignedTasks = employee.getAssignedTasks();
 
                             int score = 0;
+                            int preferenceBudget = 30; //hard-coded value for maximum number of preferences (the reason for this solution is to make sure all preferences of all employees have the same max value)
                             for (Task assignedTask : assignedTasks) {
                                 for (int i = 0; i < preferences.size(); i++) {
                                     if (assignedTask.equals(preferences.get(i))) {
-                                        score += preferences.size() - i;
+                                        score += Math.max(preferenceBudget - i, 1);
                                     }
                                 }
                             }
@@ -238,13 +237,13 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                         HardMediumSoftScore.ONE_SOFT,
                         (employee, config) -> {
                             LocalDate now = LocalDate.now();
-                            LocalDate start = employee.getAvailability().getStart();
-                            LocalDate end = employee.getAvailability().getEnd();
+                            LocalDate availabilityStart = employee.getAvailability().getStart();
+                            LocalDate availabilityEnd = employee.getAvailability().getEnd();
                             int[] capacities = calculateUtilization(employee, config.getScheduleLengthInWeeks());
 
                             int score = 0;
                             for (int i = 0; i < capacities.length; i++) {
-                                if (capacities[i] == 0 && ! start.isAfter(now.plusWeeks(i)) && ! end.isBefore(now.plusWeeks(i))) {
+                                if (capacities[i] == 0 && ! availabilityStart.isAfter(now.plusWeeks(i)) && availabilityEnd.isAfter(now.plusWeeks(i))) {
                                     score++;
                                 }
                             }

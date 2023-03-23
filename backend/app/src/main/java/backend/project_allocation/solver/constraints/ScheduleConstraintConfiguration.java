@@ -1,4 +1,4 @@
-package backend.project_allocation.solver;
+package backend.project_allocation.solver.constraints;
 
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;
