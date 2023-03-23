@@ -1,25 +1,33 @@
 package backend.project_allocation.rest.dtos;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Objects;
 
 public class ProjectDto {
 
+    private Long id;
+
     private String name;
 
-    private LocalDate deadline;
+    private LocalDate deadline = LocalDate.MAX;
 
-    private List<ProjectStageDto> stages;
+    public ProjectDto(){}
 
-    public ProjectDto(String name, LocalDate deadline, List<ProjectStageDto> stages) {
+    public ProjectDto(Long id, String name, LocalDate deadline) {
+        this.id = id;
         this.name = name;
-        this.stages = stages;
+        this.deadline = deadline;
+    }
 
-        if(deadline == null){
-            this.deadline = LocalDate.MAX;
-        } else {
-            this.deadline = deadline;
-        }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -34,15 +42,21 @@ public class ProjectDto {
         return deadline;
     }
 
+    @JsonSetter(nulls = Nulls.SKIP)
     public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 
-    public List<ProjectStageDto> getStages() {
-        return stages;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectDto that = (ProjectDto) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(deadline, that.deadline);
     }
 
-    public void setStages(List<ProjectStageDto> stages) {
-        this.stages = stages;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, deadline);
     }
 }

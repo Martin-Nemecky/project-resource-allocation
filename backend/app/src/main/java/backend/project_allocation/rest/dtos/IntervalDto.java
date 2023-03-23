@@ -1,21 +1,22 @@
 package backend.project_allocation.rest.dtos;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class IntervalDto {
 
     private LocalDate start;
 
-    private LocalDate end;
+    private LocalDate end = LocalDate.MAX;
+
+    public IntervalDto() {}
 
     public IntervalDto(LocalDate start, LocalDate end) {
         this.start = start;
-
-        if(end == null) {
-            this.end = LocalDate.MAX;
-        } else {
-            this.end = end;
-        }
+        this.end = end;
     }
 
     public LocalDate getStart() {
@@ -30,7 +31,21 @@ public class IntervalDto {
         return end;
     }
 
+    @JsonSetter(nulls = Nulls.SKIP)
     public void setEnd(LocalDate end) {
         this.end = end;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IntervalDto that = (IntervalDto) o;
+        return Objects.equals(start, that.start) && Objects.equals(end, that.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
     }
 }

@@ -1,22 +1,46 @@
 package backend.project_allocation.rest.dtos;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
+import java.util.Objects;
 
 public class ProjectStageDto {
 
+    private Long id;
+
+    private Long projectId;
+
     private String name;
 
-    private int rank;
+    private int rank = 0;
 
-    private boolean isIndependent;
+    private boolean isIndependent = false;
 
-    private List<TaskDto> tasks;
+    public ProjectStageDto(){}
 
-    public ProjectStageDto(String name, int rank, boolean isIndependent, List<TaskDto> tasks) {
+    public ProjectStageDto(Long id, Long projectId, String name, int rank, boolean isIndependent) {
+        this.id = id;
+        this.projectId = projectId;
         this.name = name;
         this.rank = rank;
         this.isIndependent = isIndependent;
-        this.tasks = tasks;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     public String getName() {
@@ -31,23 +55,30 @@ public class ProjectStageDto {
         return rank;
     }
 
+    @JsonSetter(nulls = Nulls.SKIP)
     public void setRank(int rank) {
         this.rank = rank;
     }
 
-    public boolean isIndependent() {
+    public boolean getIsIndependent() {
         return isIndependent;
     }
 
-    public void setIndependent(boolean independent) {
-        isIndependent = independent;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public void setIsIndependent(boolean isIndependent) {
+        this.isIndependent = isIndependent;
     }
 
-    public List<TaskDto> getTasks() {
-        return tasks;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectStageDto that = (ProjectStageDto) o;
+        return rank == that.rank && isIndependent == that.isIndependent && Objects.equals(id, that.id) && Objects.equals(projectId, that.projectId) && Objects.equals(name, that.name);
     }
 
-    public void setTasks(List<TaskDto> tasks) {
-        this.tasks = tasks;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, projectId, name, rank, isIndependent);
     }
 }
