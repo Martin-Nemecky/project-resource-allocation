@@ -1,5 +1,7 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -9,13 +11,13 @@ public class Interval {
 
     private LocalDate end;
 
-    public Interval(LocalDate start) {
-        this.start = start;
-        this.end = LocalDate.MAX;
-    }
     public Interval(LocalDate start, LocalDate end) {
-        this.start = start;
-        this.end = end;
+        this.start = Ensure.notNull(start, "Interval start field cannot be null");
+        this.end = Ensure.notNullElse(end, LocalDate.MAX);
+
+        if(this.end.isBefore(this.start)){
+            throw new IllegalArgumentException("End must be after start");
+        }
     }
 
     // ************************************************************************
@@ -25,16 +27,8 @@ public class Interval {
         return start;
     }
 
-    public void setStart(LocalDate start) {
-        this.start = start;
-    }
-
     public LocalDate getEnd() {
         return end;
-    }
-
-    public void setEnd(LocalDate end) {
-        this.end = end;
     }
 
     @Override

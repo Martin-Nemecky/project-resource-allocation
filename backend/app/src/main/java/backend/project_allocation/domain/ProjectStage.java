@@ -1,79 +1,84 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
+
 import java.util.Objects;
 
-public class ProjectStage {
+public class ProjectStage implements Cloneable{
 
-    private String name;
+    private final Long id;
+
+    private final String name;
 
     /**
-     * Rank number defines when stage starts. Lower rank number represents earlier start.
+     * Rank number defines when stage can start. Lower rank number represents earlier start.
      */
-    private int rank;
+    private final int rank;
 
     private boolean isIndependent;
 
     private Project project;
 
-    public ProjectStage(String name, int rank, boolean isIndependent, Project project) {
-        this.name = name;
+    public ProjectStage(Long id, String name, int rank, boolean isIndependent, Project project) {
+        this.id = Ensure.notNull(id, "ProjectStage id field cannot be null");
+        this.name = Ensure.notNull(name, "ProjectStage name field cannot be null");
         this.rank = rank;
         this.isIndependent = isIndependent;
-        this.project = project;
+        this.project = Ensure.notNull(project, "ProjectStage project field cannot be null");
     }
 
     // ************************************************************************
     // Getters and setters
     // ************************************************************************
-    public String getName() {
-        return name;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public int getRank() {
         return rank;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     public boolean isIndependent() {
         return isIndependent;
-    }
-
-    public void setIndependent(boolean independent) {
-        isIndependent = independent;
     }
 
     public Project getProject() {
         return project;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    @Override
+    public ProjectStage clone(){
+        return new ProjectStage(
+                getId(),
+                getName(),
+                getRank(),
+                isIndependent(),
+                getProject()
+        );
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProjectStage that = (ProjectStage) o;
-        return name.equals(that.name) && project.equals(that.project);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, project);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "ProjectStage{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", rank=" + rank +
                 ", isIndependent=" + isIndependent +
                 ", project=" + project +

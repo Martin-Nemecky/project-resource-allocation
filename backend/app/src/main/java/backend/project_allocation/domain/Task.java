@@ -1,5 +1,6 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @PlanningEntity
-public class Task {
+public class Task implements Cloneable {
 
     @PlanningId
     private Long id;
@@ -21,8 +22,7 @@ public class Task {
     @PlanningVariable(nullable = true)
     private Employee assignedEmployee;
 
-    @PlanningPin
-    private boolean isLocked = false;
+    private boolean isLocked;
 
     private int durationInWeeks;
 
@@ -32,22 +32,27 @@ public class Task {
 
     private ProjectStage projectStage;
 
-    //For Optaplanner
+    //Required by Optaplanner
     public Task() {
     }
 
-    public Task(Long id, LocalDate startingDate, int durationInWeeks, double requiredCapacityInFTE, Map<Skill, SkillLevel> requiredCompetences, Employee assignedEmployee, ProjectStage projectStage) {
-        this.id = id;
+    public Task(Long id, LocalDate startingDate, Employee assignedEmployee, boolean isLocked, int durationInWeeks, double requiredCapacityInFTE, Map<Skill, SkillLevel> requiredCompetences,  ProjectStage projectStage) {
+        this.id = Ensure.notNull(id, "Task id field cannot be null");
         this.startingDate = startingDate;
-        this.durationInWeeks = durationInWeeks;
-        this.requiredCapacityInHoursPerWeek = (int)(requiredCapacityInFTE * 40);
-        this.requiredCompetences = requiredCompetences;
         this.assignedEmployee = assignedEmployee;
-        this.projectStage = projectStage;
+        this.isLocked = isLocked;
 
-        if (assignedEmployee != null) {
-            isLocked = true;
+        if(durationInWeeks < 1){
+            throw new IllegalArgumentException("Task durationInWeeks field must be greater than 1");
         }
+        this.durationInWeeks = durationInWeeks;
+
+        if(requiredCapacityInFTE > 1.0 || requiredCapacityInFTE < 0.0){
+            throw new IllegalArgumentException("Task requiredCapacityInFTE field must be between 0.0 and 1.0");
+        }
+        this.requiredCapacityInHoursPerWeek = (int)(requiredCapacityInFTE * 40);
+        this.requiredCompetences = Ensure.notNull(requiredCompetences, "Task requiredCompetences field cannot be null");
+        this.projectStage = Ensure.notNull(projectStage, "Task projectStage field cannot be null");
     }
 
     // ************************************************************************
@@ -57,6 +62,7 @@ public class Task {
         return id;
     }
 
+    //Required by Optaplanner
     public void setId(Long id) {
         this.id = id;
     }
@@ -65,56 +71,39 @@ public class Task {
         return startingDate;
     }
 
+    //Required by Optaplanner
     public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 
     public Employee getAssignedEmployee() {
-        return assignedEmployee;
+        return assignedEmployee != null ? assignedEmployee.clone() : null;
     }
 
+    //Required by Optaplanner
     public void setAssignedEmployee(Employee assignedEmployee) {
         this.assignedEmployee = assignedEmployee;
     }
 
+    @PlanningPin
     public boolean isLocked() {
         return isLocked;
-    }
-
-    public void setLocked(boolean locked) {
-        isLocked = locked;
     }
 
     public int getDurationInWeeks() {
         return durationInWeeks;
     }
 
-    public void setDurationInWeeks(int durationInWeeks) {
-        this.durationInWeeks = durationInWeeks;
-    }
-
     public int getRequiredCapacityInHoursPerWeek() {
         return requiredCapacityInHoursPerWeek;
     }
 
-    public void setRequiredCapacityInHoursPerWeek(int requiredCapacityInHoursPerWeek) {
-        this.requiredCapacityInHoursPerWeek = requiredCapacityInHoursPerWeek;
-    }
-
     public Map<Skill, SkillLevel> getRequiredCompetences() {
-        return requiredCompetences;
-    }
-
-    public void setRequiredCompetences(Map<Skill, SkillLevel> requiredCompetences) {
-        this.requiredCompetences = requiredCompetences;
+        return Map.copyOf(requiredCompetences);
     }
 
     public ProjectStage getProjectStage() {
         return projectStage;
-    }
-
-    public void setProjectStage(ProjectStage projectStage) {
-        this.projectStage = projectStage;
     }
 
     public Project getProject() {
@@ -125,6 +114,19 @@ public class Task {
         return getStartingDate().plusWeeks(this.getDurationInWeeks());
     }
 
+    @Override
+    public Task clone(){
+        return new Task(
+                getId(),
+                getStartingDate(),
+                getAssignedEmployee(),
+                isLocked(),
+                getDurationInWeeks(),
+                getRequiredCapacityInHoursPerWeek() / 40.0,
+                getRequiredCompetences(),
+                getProjectStage()
+        );
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

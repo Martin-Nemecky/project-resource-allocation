@@ -5,7 +5,13 @@ import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 
 @ConstraintConfiguration
-public class ScheduleConstraintConfiguration {
+public class ScheduleConstraintConfiguration implements Cloneable{
+
+    private int scheduleLengthInWeeks = 26;
+
+    private int terminationTimeInMinutes = 60;
+
+    private double employeePossibleCapacityOverheadInFTE = 0.1;
 
     //Hard Constraints
     //--------------------------------------------------------------------------------
@@ -30,7 +36,7 @@ public class ScheduleConstraintConfiguration {
     //--------------------------------------------------------------------------------
 
     @ConstraintWeight("Soft utilization conflict")
-    private HardMediumSoftScore softUtilizationConflict = HardMediumSoftScore.ofSoft(10); // for each week in which is an employee slightly over utilized
+    private HardMediumSoftScore softUtilizationConflict = HardMediumSoftScore.ofSoft(10); // for each hour in a week when an employee is slightly over utilized
 
     @ConstraintWeight("Skill level conflict")
     private HardMediumSoftScore skillLevelConflict = HardMediumSoftScore.ofSoft(60); // for each task with unfulfilled skill level
@@ -50,9 +56,56 @@ public class ScheduleConstraintConfiguration {
     private HardMediumSoftScore freeEmployeeWeeksConflict = HardMediumSoftScore.ofSoft(6); // for each week an employee has completely free
 
 
+    //Constructors
+    public ScheduleConstraintConfiguration(){}
+
+    public ScheduleConstraintConfiguration(int scheduleLengthInWeeks, int terminationTimeInMinutes, double employeePossibleCapacityOverheadInFTE, int skillConflict, int overUtilizationConflict, int projectStageConflict, int availabilityConflict, int unassignedTaskConflict, int softUtilizationConflict, int skillLevelConflict, int startingTaskDateDelayConflict, int exceededProjectDeadlineConflict, int preferenceConflict, int freeEmployeeWeeksConflict) {
+        this.scheduleLengthInWeeks = scheduleLengthInWeeks;
+        this.terminationTimeInMinutes = terminationTimeInMinutes;
+        this.employeePossibleCapacityOverheadInFTE = employeePossibleCapacityOverheadInFTE;
+        this.skillConflict = HardMediumSoftScore.ofHard(skillConflict);
+        this.overUtilizationConflict = HardMediumSoftScore.ofHard(overUtilizationConflict);
+        this.projectStageConflict = HardMediumSoftScore.ofHard(projectStageConflict);
+        this.availabilityConflict = HardMediumSoftScore.ofHard(availabilityConflict);
+        this.unassignedTaskConflict = HardMediumSoftScore.ofMedium(unassignedTaskConflict);
+        this.softUtilizationConflict = HardMediumSoftScore.ofSoft(softUtilizationConflict);
+        this.skillLevelConflict = HardMediumSoftScore.ofSoft(skillLevelConflict);
+        this.startingTaskDateDelayConflict = HardMediumSoftScore.ofSoft(startingTaskDateDelayConflict);
+        this.exceededProjectDeadlineConflict = HardMediumSoftScore.ofSoft(exceededProjectDeadlineConflict);
+        this.preferenceConflict = HardMediumSoftScore.ofSoft(preferenceConflict);
+        this.freeEmployeeWeeksConflict = HardMediumSoftScore.ofSoft(freeEmployeeWeeksConflict);
+    }
+
     // ************************************************************************
     // Getters and setters
     // ************************************************************************
+    public int getScheduleLengthInWeeks() {
+        return scheduleLengthInWeeks;
+    }
+
+    public void setScheduleLengthInWeeks(int scheduleLengthInWeeks) {
+        if(scheduleLengthInWeeks < 0) throw new IllegalArgumentException("Schedule length cannot be a negative number");
+        this.scheduleLengthInWeeks = scheduleLengthInWeeks;
+    }
+
+    public int getTerminationTimeInMinutes() {
+        return terminationTimeInMinutes;
+    }
+
+    public void setTerminationTimeInMinutes(int terminationTimeInMinutes) {
+        if(terminationTimeInMinutes < 0) throw new IllegalArgumentException("Termination time cannot be a negative number");
+        this.terminationTimeInMinutes = terminationTimeInMinutes;
+    }
+
+    public double getEmployeePossibleCapacityOverheadInFTE() {
+        return employeePossibleCapacityOverheadInFTE;
+    }
+
+    public void setEmployeePossibleCapacityOverheadInFTE(double employeePossibleCapacityOverheadInFTE) {
+        if(employeePossibleCapacityOverheadInFTE < 0.0) throw new IllegalArgumentException("Capacity overhead cannot be a negative number");
+        this.employeePossibleCapacityOverheadInFTE = employeePossibleCapacityOverheadInFTE;
+    }
+
     public int getSkillConflict() {
         return skillConflict.hardScore();
     }
@@ -150,5 +203,25 @@ public class ScheduleConstraintConfiguration {
     public void setFreeEmployeeWeeksConflict(int freeEmployeeWeeksConflictReward) {
         if(freeEmployeeWeeksConflictReward < 0) throw new IllegalArgumentException("Free days conflict reward cannot be a negative number");
         this.freeEmployeeWeeksConflict = HardMediumSoftScore.ofSoft(freeEmployeeWeeksConflictReward);
+    }
+
+    @Override
+    public ScheduleConstraintConfiguration clone(){
+        return new ScheduleConstraintConfiguration(
+                getScheduleLengthInWeeks(),
+                getTerminationTimeInMinutes(),
+                getEmployeePossibleCapacityOverheadInFTE(),
+                getSkillConflict(),
+                getOverUtilizationConflict(),
+                getProjectStageConflict(),
+                getAvailabilityConflict(),
+                getUnassignedTaskConflict(),
+                getSoftUtilizationConflict(),
+                getSkillLevelConflict(),
+                getStartingTaskDateDelayConflict(),
+                getExceededProjectDeadlineConflict(),
+                getPreferenceConflict(),
+                getFreeEmployeeWeeksConflict()
+        );
     }
 }

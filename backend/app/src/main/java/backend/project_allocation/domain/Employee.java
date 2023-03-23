@@ -1,12 +1,13 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
 import java.util.*;
 
 @PlanningEntity
-public class Employee {
+public class Employee implements Cloneable {
 
     private String firstname;
 
@@ -16,27 +17,28 @@ public class Employee {
 
     private int capacityInHoursPerWeek;
 
-    private int capacityOverheadInHoursPerWeek = 8;
-
     private List<Task> preferredTasks;
 
     private Interval availability;
 
     @InverseRelationShadowVariable(sourceVariableName = "assignedEmployee")
-    private Set<Task> assignedTasks = new HashSet<>();
+    private Set<Task> assignedTasks;
 
-    //For Optaplanner
+    //Required by Optaplanner
     public Employee() {}
 
-    public Employee(String firstname, String lastname, Map<Skill, SkillLevel> competences, double capacityInFTE, double capacityOverheadInFTE, List<Task> preferredTasks, Interval availability, Set<Task> assignedTasks) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.competences = competences;
+    public Employee(String firstname, String lastname, Map<Skill, SkillLevel> competences, double capacityInFTE, List<Task> preferredTasks, Interval availability, Set<Task> assignedTasks) {
+        this.firstname = Ensure.notNull(firstname, "Employee firstname field cannot be null");
+        this.lastname = Ensure.notNull(lastname, "Employee lastname field cannot be null");
+        this.competences = Ensure.notNull(competences, "Employee competences field cannot be null");
+
+        if(capacityInFTE > 1.0 || capacityInFTE < 0.0){
+            throw new IllegalArgumentException("Employee capacityInFTE field must be between 0.0 and 1.0");
+        }
         this.capacityInHoursPerWeek = (int)(capacityInFTE * 40);
-        this.capacityOverheadInHoursPerWeek = (int)(capacityOverheadInFTE * 40);
-        this.preferredTasks = preferredTasks;
-        this.availability = availability;
-        this.assignedTasks = assignedTasks;
+        this.preferredTasks = Ensure.notNull(preferredTasks, "Employee preferredTasks field cannot be null");
+        this.availability = Ensure.notNull(availability, "Employee availability field cannot be null");
+        this.assignedTasks = Ensure.notNull(assignedTasks, "Employee assignedTasks field cannot be null");
     }
 
     // ************************************************************************
@@ -46,62 +48,31 @@ public class Employee {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
     public String getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     public Map<Skill, SkillLevel> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(Map<Skill, SkillLevel> competences) {
-        this.competences = competences;
+        return Map.copyOf(competences);
     }
 
     public int getCapacityInHoursPerWeek() {
         return capacityInHoursPerWeek;
     }
 
-    public void setCapacityInHoursPerWeek(int capacityInHoursPerWeek) {
-        this.capacityInHoursPerWeek = capacityInHoursPerWeek;
-    }
-
-    public int getCapacityOverheadInHoursPerWeek() {
-        return capacityOverheadInHoursPerWeek;
-    }
-
-    public void setCapacityOverheadInHoursPerWeek(int capacityOverheadInHoursPerWeek) {
-        this.capacityOverheadInHoursPerWeek = capacityOverheadInHoursPerWeek;
-    }
-
     public List<Task> getPreferredTasks() {
-        return preferredTasks;
-    }
-
-    public void setPreferredTasks(List<Task> preferredTasks) {
-        this.preferredTasks = preferredTasks;
+        return List.copyOf(preferredTasks);
     }
 
     public Interval getAvailability() {
         return availability;
     }
 
-    public void setAvailability(Interval availability) {
-        this.availability = availability;
-    }
-
     public Set<Task> getAssignedTasks() {
-        return assignedTasks;
+        return Set.copyOf(assignedTasks);
     }
 
+    //Required by Optaplanner
     public void setAssignedTasks(Set<Task> assignedTasks) {
         this.assignedTasks = assignedTasks;
     }
@@ -111,12 +82,25 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return Objects.equals(firstname, employee.firstname) && Objects.equals(lastname, employee.lastname);
+        return firstname.equals(employee.firstname) && lastname.equals(employee.lastname);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(firstname, lastname);
+    }
+
+    @Override
+    public Employee clone(){
+        return new Employee(
+                getFirstname(),
+                getLastname(),
+                getCompetences(),
+                getCapacityInHoursPerWeek() / 40.0,
+                getPreferredTasks(),
+                getAvailability(),
+                getAssignedTasks()
+        );
     }
 
     @Override
@@ -126,9 +110,9 @@ public class Employee {
                 ", lastname='" + lastname + '\'' +
                 ", competences=" + competences +
                 ", capacityInHoursPerWeek=" + capacityInHoursPerWeek +
-                ", preferredTasks=" + preferredTasks +
+                ", preferredTasksSize=" + preferredTasks.size() +
                 ", availability=" + availability +
-                ", assignedTasks=" + assignedTasks +
+                ", assignedTasksSize=" + assignedTasks.size() +
                 '}';
     }
 }

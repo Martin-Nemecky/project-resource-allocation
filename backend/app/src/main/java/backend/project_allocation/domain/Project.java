@@ -1,41 +1,37 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class Project {
 
-    private String name;
+    private final Long id;
 
-    private LocalDate deadline;
+    private final String name;
 
-    public Project(String name) {
-        this.name = name;
-        this.deadline = LocalDate.MAX;
-    }
+    private final LocalDate deadline;
 
-    public Project(String name, LocalDate deadline) {
-        this.name = name;
-        this.deadline = deadline;
+    public Project(Long id, String name, LocalDate deadline) {
+        this.id = Ensure.notNull(id, "Project id field cannot be null");
+        this.name = Ensure.notNull(name, "Project name field cannot be null");
+        this.deadline = Ensure.notNullElse(deadline, LocalDate.MAX);
     }
 
     // ************************************************************************
     // Getters and setters
     // ************************************************************************
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public LocalDate getDeadline() {
         return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
     }
 
     @Override
@@ -43,18 +39,19 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return name.equals(project.name);
+        return id.equals(project.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Project{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", deadline=" + deadline +
                 '}';
     }

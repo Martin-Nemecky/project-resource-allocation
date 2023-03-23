@@ -1,14 +1,17 @@
 package backend.project_allocation.domain;
 
+import backend.project_allocation.domain.exceptions.Ensure;
+
 import java.util.Objects;
 
 public class Skill {
 
     private Long id;
     private String name;
+
     public Skill(Long id, String name) {
-        this.id = id;
-        this.name = name;
+        this.id = Ensure.notNull(id, "Skill id field cannot be null");
+        this.name = Ensure.notNull(name, "Skill name field cannot be null");
     }
 
     // ************************************************************************
@@ -19,16 +22,8 @@ public class Skill {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
@@ -36,12 +31,12 @@ public class Skill {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
-        return Objects.equals(id, skill.id);
+        return id.equals(skill.id) && name.equals(skill.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name);
     }
 
     @Override
