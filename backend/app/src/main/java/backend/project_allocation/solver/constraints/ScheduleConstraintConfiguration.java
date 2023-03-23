@@ -16,41 +16,41 @@ public class ScheduleConstraintConfiguration implements Cloneable{
     //Hard Constraints
     //--------------------------------------------------------------------------------
     @ConstraintWeight("Skill conflict")
-    private HardMediumSoftScore skillConflict = HardMediumSoftScore.ofHard(1); // for each assigned task with unfulfilled skills
+    private HardMediumSoftScore skillConflict = HardMediumSoftScore.ofHard(40); // for each assigned task with unfulfilled skills
 
     @ConstraintWeight("Over utilization conflict")
     private HardMediumSoftScore overUtilizationConflict = HardMediumSoftScore.ofHard(1); // for each over utilized employee
 
     @ConstraintWeight("Project stage conflict")
-    private HardMediumSoftScore projectStageConflict = HardMediumSoftScore.ofHard(1); // for each outrun of a task from a later project stage
+    private HardMediumSoftScore projectStageConflict = HardMediumSoftScore.ofHard(2); // for each outrun of a task from a later project stage
 
     @ConstraintWeight("Availability conflict")
-    private HardMediumSoftScore availabilityConflict = HardMediumSoftScore.ofHard(1); // for each task that is poorly assigned
+    private HardMediumSoftScore availabilityConflict = HardMediumSoftScore.ofHard(3); // for each task that is poorly assigned
 
     // Medium Constrains
     //--------------------------------------------------------------------------------
     @ConstraintWeight("Unassigned task conflict")
-    private HardMediumSoftScore unassignedTaskConflict = HardMediumSoftScore.ofMedium(1); // for each task that is unassigned
+    private HardMediumSoftScore unassignedTaskConflict = HardMediumSoftScore.ofMedium(40); // for each task that is unassigned
 
     // Negative Soft Constrains
     //--------------------------------------------------------------------------------
 
     @ConstraintWeight("Soft utilization conflict")
-    private HardMediumSoftScore softUtilizationConflict = HardMediumSoftScore.ofSoft(10); // for each hour in a week when an employee is slightly over utilized
+    private HardMediumSoftScore softUtilizationConflict = HardMediumSoftScore.ofSoft(20); // for each hour in a week when an employee is slightly over utilized
 
     @ConstraintWeight("Skill level conflict")
-    private HardMediumSoftScore skillLevelConflict = HardMediumSoftScore.ofSoft(60); // for each task with unfulfilled skill level
+    private HardMediumSoftScore skillLevelConflict = HardMediumSoftScore.ofSoft(5); // for each task with unfulfilled skill level
 
     @ConstraintWeight("Starting task date delay conflict")
-    private HardMediumSoftScore startingTaskDateDelayConflict = HardMediumSoftScore.ofSoft(10); // for task (penalize each week from now() to task.startingDate)
+    private HardMediumSoftScore startingTaskDateDelayConflict = HardMediumSoftScore.ofSoft(5); // for task (penalize each week from now() to task.startingDate)
 
     @ConstraintWeight("Exceeded project deadline conflict")
-    private HardMediumSoftScore exceededProjectDeadlineConflict = HardMediumSoftScore.ofSoft(100_000); // for each week that a task exceeds the project deadline
+    private HardMediumSoftScore exceededProjectDeadlineConflict = HardMediumSoftScore.ofSoft(1_000_000); // for each week that a task exceeds the project deadline
 
     // Positive Soft Constrains
     //--------------------------------------------------------------------------------
     @ConstraintWeight("Preference conflict")
-    private HardMediumSoftScore preferenceConflict = HardMediumSoftScore.ofSoft(15); // for each met preference of an employee
+    private HardMediumSoftScore preferenceConflict = HardMediumSoftScore.ofSoft(40); // for each met preference of an employee
 
     @ConstraintWeight("Free employee weeks conflict")
     private HardMediumSoftScore freeEmployeeWeeksConflict = HardMediumSoftScore.ofSoft(6); // for each week an employee has completely free

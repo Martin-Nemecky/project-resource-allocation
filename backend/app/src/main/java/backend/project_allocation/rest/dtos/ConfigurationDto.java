@@ -13,27 +13,27 @@ public class ConfigurationDto {
 
     private double employeePossibleCapacityOverheadInFTE = 0.1;
 
-    private int skillWeight = 1;
+    private int skillWeight = 40;
 
     private int hardUtilizationWeight = 1;
 
-    private int projectStageWeight = 1;
+    private int projectStageWeight = 2;
 
-    private int availabilityWeight = 1;
+    private int availabilityWeight = 3;
 
-    private int unassignedTaskWeight = 1;
+    private int unassignedTaskWeight = 40;
 
-    private int skillLevelWeight = 1;
+    private int skillLevelWeight = 20;
 
-    private int softUtilizationWeight = 1;
+    private int softUtilizationWeight = 5;
 
-    private int taskDelayWeight = 1;
+    private int taskDelayWeight = 5;
 
-    private int deadlineWeight = 1;
+    private int deadlineWeight = 1_000_000;
 
-    private int preferenceWeight = 1;
+    private int preferenceWeight = 40;
 
-    private int freeWeekWeight = 1;
+    private int freeWeekWeight = 6;
 
     public ConfigurationDto(){}
 
