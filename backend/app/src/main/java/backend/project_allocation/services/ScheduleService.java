@@ -1,37 +1,57 @@
 package backend.project_allocation.services;
 
 import backend.project_allocation.domain.Schedule;
+import backend.project_allocation.domain.exceptions.Ensure;
 import backend.project_allocation.repositories.ScheduleRepository;
-import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import backend.project_allocation.solver.SolverBuilder;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ScheduleService implements backend.project_allocation.services.Service<Long, Schedule> {
 
     private final ScheduleRepository scheduleRepository;
 
-    private final SolverManager<Schedule, Long> solverManager;
+    private final SolverBuilder builder;
 
-    private int scheduleLengthInWeeks = 26;
+    private SolverManager<Schedule, Long> solverManager;
 
-    public ScheduleService(@Qualifier("scheduleInMemoryRepository") ScheduleRepository scheduleRepository, SolverManager<Schedule, Long> solverManager) {
+    public ScheduleService(@Qualifier("scheduleInMemoryRepository") ScheduleRepository scheduleRepository, SolverBuilder builder) {
         this.scheduleRepository = scheduleRepository;
-        this.solverManager = solverManager;
+        this.builder = builder;
     }
 
-    public void solveLive(Schedule schedule) {
-        scheduleRepository.save(schedule);
+    public void solveLive(Schedule schedule, Long terminationTimeInMinutes) {
+        Ensure.notNull(schedule, "Schedule cannot be null");
+
+        scheduleRepository.clear();
+        save(schedule);
+
+        solverManager = builder.withTermination(terminationTimeInMinutes).build();
         solverManager.solveAndListen(schedule.getId(), this::findById, this::save);
     }
 
     public void stopSolving(Long scheduleId) {
-        solverManager.terminateEarly(scheduleId);
+        if(solverManager != null && Objects.equals(findById(scheduleId).getId(), scheduleId)) {
+            solverManager.terminateEarly(scheduleId);
+            solverManager = null;
+        }
+    }
+
+    @Override
+    public Schedule findById(Long id) {
+        Ensure.notNull(id, "Id cannot be null");
+
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
+        if(optionalSchedule.isEmpty())
+            throw new IllegalArgumentException("No solution found with id: " + id);
+
+        return optionalSchedule.get();
     }
 
     public Schedule findBestSolution() {
@@ -50,35 +70,12 @@ public class ScheduleService implements backend.project_allocation.services.Serv
 
     @Override
     public void save(Schedule entity) {
-        Optional<Schedule> optionalSchedule = scheduleRepository.findLast();
-        if(optionalSchedule.isEmpty())
-            return;
-
-        HardMediumSoftScore lastScore = scheduleRepository.findLast().get().getScore();
-        HardMediumSoftScore newScore = entity.getScore();
-
-        if(lastScore.compareTo(newScore) < 0) {
-            scheduleRepository.save(entity);
-        }
-    }
-
-    //only redirecting so that Optaplanner could use this method
-    @Override
-    public Schedule findById(Long id) {
-        return this.findBestSolution();
+        Ensure.notNull(entity, "Schedule cannot be null");
+        scheduleRepository.save(entity.clone());
     }
 
     @Override
-    public Schedule delete(Long id) {
-        throw new UnsupportedOperationException("Operation delete is not supported in schedule service.");
-    }
-
-    //Getters and Setters
-    public int getScheduleLengthInWeeks() {
-        return scheduleLengthInWeeks;
-    }
-
-    public void setScheduleLengthInWeeks(int scheduleLengthInWeeks) {
-        this.scheduleLengthInWeeks = scheduleLengthInWeeks;
+    public void clear() {
+        scheduleRepository.clear();
     }
 }

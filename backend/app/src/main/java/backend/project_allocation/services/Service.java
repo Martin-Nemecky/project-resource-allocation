@@ -10,5 +10,5 @@ public interface Service<T, R> {
 
     void save(R entity);
 
-    R delete(T id);
+    void clear();
 }
