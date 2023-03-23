@@ -2,40 +2,46 @@ package backend.project_allocation.rest.converters;
 
 import backend.project_allocation.domain.Skill;
 import backend.project_allocation.domain.SkillLevel;
+import backend.project_allocation.domain.exceptions.Ensure;
 import backend.project_allocation.rest.dtos.CompetenceDto;
-import backend.project_allocation.rest.dtos.SkillDto;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class CompetenceConverter {
 
-    public static Map.Entry<Long, SkillLevel> toDto(Map.Entry<Skill, SkillLevel> competence){
-        return Map.entry(competence.getKey().getId(), competence.getValue());
+    private final SkillLevelConverter skillLevelConverter;
+
+    public CompetenceConverter(SkillLevelConverter skillLevelConverter) {
+        this.skillLevelConverter = skillLevelConverter;
     }
 
-    public static Map.Entry<Skill, SkillLevel> fromDto(Map.Entry<Long, SkillLevel> competenceDto, Map<Long, Skill> skills) {
-        return Map.entry(skills.get(competenceDto.getKey()), competenceDto.getValue());
+    public CompetenceDto toDto(Map.Entry<Skill, SkillLevel> competence){
+        return new CompetenceDto(competence.getKey().getId(), skillLevelConverter.toDto(competence.getValue()));
     }
 
-    public static Map<Long, SkillLevel> toDtoList(Map<Skill, SkillLevel> skills) {
-        Map<Long, SkillLevel> competenceDtoList = new HashMap<>();
+    public Map.Entry<Skill, SkillLevel> fromDto(CompetenceDto competenceDto, Map<Long, Skill> skills) {
+        Ensure.notNull(skills.get(competenceDto.getSkillId()), "Competence has a non-existing skill id (" + competenceDto.getSkillId() + ")");
+        return Map.entry(skills.get(competenceDto.getSkillId()), skillLevelConverter.fromDto(competenceDto.getSkillLevel()));
+    }
+
+    public List<CompetenceDto> toDtoList(Map<Skill, SkillLevel> skills) {
+        List<CompetenceDto> competenceDtoList = new LinkedList<>();
 
         for(Map.Entry<Skill, SkillLevel> entry : skills.entrySet()){
-            competenceDtoList.put(entry.getKey().getId(), entry.getValue());
+            competenceDtoList.add(toDto(entry));
         }
 
         return competenceDtoList;
     }
 
-    public static Map<Skill, SkillLevel> fromDtoList(List<CompetenceDto> competenceDtoList, List<SkillDto> skills) {
+    public Map<Skill, SkillLevel> fromDtoList(List<CompetenceDto> competenceDtoList, Map<Long, Skill> skills) {
         Map<Skill, SkillLevel> competences = new HashMap<>();
 
         for(CompetenceDto competenceDto : competenceDtoList){
-            Optional<Skill> optionalSkill = skills.stream().filter(skillDto -> skillDto.getId().equals(competenceDto.getSkillId())).map(SkillConverter::fromDto).findFirst();
-            if(optionalSkill.isEmpty())
-                throw new IllegalArgumentException("Skill not found.");
-
-            competences.put(optionalSkill.get(), competenceDto.getSkillLevel());
+            Map.Entry<Skill, SkillLevel> convertedCompetence = fromDto(competenceDto, skills);
+            competences.put(convertedCompetence.getKey(), convertedCompetence.getValue());
         }
 
         return competences;

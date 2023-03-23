@@ -1,72 +1,140 @@
 package backend.project_allocation.rest.converters;
 
-import backend.project_allocation.domain.Employee;
-import backend.project_allocation.domain.Schedule;
-import backend.project_allocation.domain.Task;
+import backend.project_allocation.domain.*;
 import backend.project_allocation.rest.dtos.*;
-import org.springframework.stereotype.Component;
+import backend.project_allocation.rest.generators.DateGenerator;
+import backend.project_allocation.solver.constraints.ScheduleConstraintConfiguration;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@Component
+@Service
 public class ScheduleConverter {
 
-    public static Schedule fromDto(ScheduleDto scheduleDto) {
-        Set<Task> tasks = new HashSet<>();
+    private final SkillConverter skillConverter;
 
-        for(ProjectDto projectDto : scheduleDto.getProjects()){
-            for(ProjectStageDto projectStageDto : projectDto.getStages()){
-                for(TaskDto taskDto : projectStageDto.getTasks()){
-                    tasks.add(TaskConverter.fromDto(taskDto, projectStageDto, projectDto, scheduleDto.getSkills()));
-                }
-            }
-        }
+    private final ProjectConverter projectConverter;
 
-        Set<Employee> employees = new HashSet<>();
-        for(EmployeeDto employeeDto : scheduleDto.getEmployees()){
-            employees.add(EmployeeConverter.fromDto(employeeDto, scheduleDto.getSkills(), scheduleDto.getConfiguration(), tasks));
-        }
+    private final ProjectStageConverter projectStageConverter;
 
-        for(Employee employee : employees){
-            for(Task assignedTask : employee.getAssignedTasks()){
-                for(Task task : tasks){
-                    if(assignedTask.getId().equals(task.getId())){
-                        task.setAssignedEmployee(employee);
-                    }
-                }
-            }
-        }
+    private final TaskConverter taskConverter;
 
-        Set<LocalDate> startingDates = generateDates(scheduleDto.getConfiguration().getScheduleLengthInWeeks());
-        Schedule schedule = new Schedule((long) 1, tasks, startingDates, employees);
+    private final EmployeeConverter employeeConverter;
 
-        schedule.getConstraintConfiguration().setSkillConflict(scheduleDto.getConfiguration().getConstraintParams().getSkillWeight());
-        schedule.getConstraintConfiguration().setOverUtilizationConflict(scheduleDto.getConfiguration().getConstraintParams().getHardUtilizationWeight());
-        schedule.getConstraintConfiguration().setProjectStageConflict(scheduleDto.getConfiguration().getConstraintParams().getProjectStageWeight());
-        schedule.getConstraintConfiguration().setAvailabilityConflict(scheduleDto.getConfiguration().getConstraintParams().getAvailabilityWeight());
+    private final DateGenerator dateGenerator;
 
-        schedule.getConstraintConfiguration().setUnassignedTaskConflict(scheduleDto.getConfiguration().getConstraintParams().getUnassignedTaskWeight());
+    public ScheduleConverter(SkillConverter skillConverter, ProjectConverter projectConverter, ProjectStageConverter projectStageConverter, TaskConverter taskConverter, EmployeeConverter employeeConverter, DateGenerator dateGenerator) {
+        this.skillConverter = skillConverter;
+        this.projectConverter = projectConverter;
+        this.projectStageConverter = projectStageConverter;
+        this.taskConverter = taskConverter;
+        this.employeeConverter = employeeConverter;
+        this.dateGenerator = dateGenerator;
+    }
 
-        schedule.getConstraintConfiguration().setSkillLevelConflict(scheduleDto.getConfiguration().getConstraintParams().getSkillLevelWeight());
-        schedule.getConstraintConfiguration().setSoftUtilizationConflict(scheduleDto.getConfiguration().getConstraintParams().getSoftUtilizationWeight());
-        schedule.getConstraintConfiguration().setStartingTaskDateDelayConflict(scheduleDto.getConfiguration().getConstraintParams().getTaskDelayWeight());
-        schedule.getConstraintConfiguration().setExceededProjectDeadlineConflict(scheduleDto.getConfiguration().getConstraintParams().getDeadlineWeight());
-        schedule.getConstraintConfiguration().setPreferenceConflict(scheduleDto.getConfiguration().getConstraintParams().getPreferenceWeight());
-        schedule.getConstraintConfiguration().setFreeEmployeeWeeksConflict(scheduleDto.getConfiguration().getConstraintParams().getFreeWeekWeight());
+    public Schedule fromDto(ScheduleDto scheduleDto) {
+        Map<Long, Skill> skills = skillConverter.fromDtoList(scheduleDto.getSkills());
+        Map<Long, Project> projects = projectConverter.fromDtoList(scheduleDto.getProjects());
+        Map<Long, ProjectStage> stages = projectStageConverter.fromDtoList(scheduleDto.getStages(), projects);
+        Map<Long, Task> tasks = taskConverter.fromDtoList(scheduleDto.getTasks(), stages, skills);
+        Set<Employee> employees = employeeConverter.fromDtoList(scheduleDto.getEmployees(), tasks, skills);
+        List<LocalDate> startingDates = dateGenerator.generate(scheduleDto.getConfigurationParameters().getScheduleLengthInWeeks());
+
+        Schedule schedule = new Schedule(
+                scheduleDto.getId(),
+                skills.values().stream().toList(),
+                projects.values().stream().toList(),
+                stages.values().stream().toList(),
+                tasks.values().stream().toList(),
+                startingDates,
+                employees.stream().toList(),
+                getConfiguration(scheduleDto)
+        );
 
         return schedule;
     }
 
-    private static Set<LocalDate> generateDates(int count){
-        Set<LocalDate> result = new HashSet<>();
-        LocalDate now = LocalDate.now();
+    public ScheduleDto toDto(Schedule schedule) {
+        List<SkillDto> skillDtoList = skillConverter.toDtoList(schedule.getSkillList());
+        List<ProjectDto> projectDtoList = projectConverter.toDtoList(schedule.getProjectList());
+        List<ProjectStageDto> projectStageDtoList = projectStageConverter.toDtoList(schedule.getProjectStageList());
+        List<TaskDto> taskDtoList = taskConverter.toDtoList(schedule.getTaskList());
+        List<EmployeeDto> employeeDtoList = employeeConverter.toDtoList(schedule.getEmployeeList());
 
-        for(int i = 0; i < count; i++){
-            result.add(now.plusWeeks(i));
+        ConfigurationDto configurationDto = null;
+        if(schedule.getConstraintConfiguration() != null) {
+            configurationDto = new ConfigurationDto(
+                    schedule.getConstraintConfiguration().getScheduleLengthInWeeks(),
+                    schedule.getConstraintConfiguration().getTerminationTimeInMinutes(),
+                    schedule.getConstraintConfiguration().getEmployeePossibleCapacityOverheadInFTE(),
+                    schedule.getConstraintConfiguration().getSkillConflict(),
+                    schedule.getConstraintConfiguration().getOverUtilizationConflict(),
+                    schedule.getConstraintConfiguration().getProjectStageConflict(),
+                    schedule.getConstraintConfiguration().getAvailabilityConflict(),
+                    schedule.getConstraintConfiguration().getUnassignedTaskConflict(),
+                    schedule.getConstraintConfiguration().getSkillLevelConflict(),
+                    schedule.getConstraintConfiguration().getSoftUtilizationConflict(),
+                    schedule.getConstraintConfiguration().getStartingTaskDateDelayConflict(),
+                    schedule.getConstraintConfiguration().getExceededProjectDeadlineConflict(),
+                    schedule.getConstraintConfiguration().getPreferenceConflict(),
+                    schedule.getConstraintConfiguration().getFreeEmployeeWeeksConflict()
+            );
         }
 
-        return result;
+        ScoreDto scoreDto = null;
+        if(schedule.getScore() != null){
+            scoreDto = new ScoreDto(schedule.getScore().hardScore(), schedule.getScore().mediumScore(), schedule.getScore().softScore());
+        }
+
+        return new ScheduleDto(schedule.getId(), skillDtoList, projectDtoList, projectStageDtoList, taskDtoList, employeeDtoList, configurationDto, scoreDto);
     }
+
+    public List<ScheduleDto> toDtoList(List<Schedule> schedules) {
+        return schedules.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public List<Schedule> fromDtoList(List<ScheduleDto> scheduleDtoList) {
+        return scheduleDtoList.stream().map(this::fromDto).collect(Collectors.toList());
+    }
+
+    private ScheduleConstraintConfiguration getConfiguration(ScheduleDto scheduleDto){
+        return new ScheduleConstraintConfiguration(
+                scheduleDto.getConfigurationParameters().getScheduleLengthInWeeks(),
+                scheduleDto.getConfigurationParameters().getTerminationTimeInMinutes(),
+                scheduleDto.getConfigurationParameters().getEmployeePossibleCapacityOverheadInFTE(),
+                scheduleDto.getConfigurationParameters().getSkillWeight(),
+                scheduleDto.getConfigurationParameters().getHardUtilizationWeight(),
+                scheduleDto.getConfigurationParameters().getProjectStageWeight(),
+                scheduleDto.getConfigurationParameters().getAvailabilityWeight(),
+                scheduleDto.getConfigurationParameters().getUnassignedTaskWeight(),
+                scheduleDto.getConfigurationParameters().getSoftUtilizationWeight(),
+                scheduleDto.getConfigurationParameters().getSkillLevelWeight(),
+                scheduleDto.getConfigurationParameters().getTaskDelayWeight(),
+                scheduleDto.getConfigurationParameters().getDeadlineWeight(),
+                scheduleDto.getConfigurationParameters().getPreferenceWeight(),
+                scheduleDto.getConfigurationParameters().getFreeWeekWeight()
+        );
+    }
+//    private void setConfiguration(Schedule schedule, ConfigurationDto configurationDto){
+//        //hard constraints
+//        schedule.getConstraintConfiguration().setSkillConflict(configurationDto.getSkillLevelWeight());
+//        schedule.getConstraintConfiguration().setOverUtilizationConflict(configurationDto.getHardUtilizationWeight());
+//        schedule.getConstraintConfiguration().setProjectStageConflict(configurationDto.getProjectStageWeight());
+//        schedule.getConstraintConfiguration().setAvailabilityConflict(configurationDto.getAvailabilityWeight());
+//
+//        //medium constraints
+//        schedule.getConstraintConfiguration().setUnassignedTaskConflict(configurationDto.getUnassignedTaskWeight());
+//
+//        //soft constraints
+//        schedule.getConstraintConfiguration().setSkillLevelConflict(configurationDto.getSkillLevelWeight());
+//        schedule.getConstraintConfiguration().setSoftUtilizationConflict(configurationDto.getSoftUtilizationWeight());
+//        schedule.getConstraintConfiguration().setStartingTaskDateDelayConflict(configurationDto.getTaskDelayWeight());
+//        schedule.getConstraintConfiguration().setExceededProjectDeadlineConflict(configurationDto.getDeadlineWeight());
+//        schedule.getConstraintConfiguration().setPreferenceConflict(configurationDto.getPreferenceWeight());
+//        schedule.getConstraintConfiguration().setFreeEmployeeWeeksConflict(configurationDto.getFreeWeekWeight());
+//    }
 }
