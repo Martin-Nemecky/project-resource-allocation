@@ -11,5 +11,7 @@ public interface Repository<T, R> {
 
     void save(R entity);
 
-    Optional<R> delete(T id);
+    Optional<R> remove(T id);
+
+    void clear();
 }
