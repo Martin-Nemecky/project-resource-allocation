@@ -12,6 +12,8 @@ public class TaskDto {
 
     private Long id;
 
+    private String name;
+
     private Long stageId;
 
     private LocalDate startingDate;
@@ -27,8 +29,9 @@ public class TaskDto {
     public TaskDto() {
     }
 
-    public TaskDto(Long id, Long stageId, LocalDate startingDate, boolean isLocked, int durationInWeeks, double requiredCapacityInFTE, List<CompetenceDto> requiredCompetences) {
+    public TaskDto(Long id, String name, Long stageId, LocalDate startingDate, boolean isLocked, int durationInWeeks, double requiredCapacityInFTE, List<CompetenceDto> requiredCompetences) {
         this.id = id;
+        this.name = name;
         this.stageId = stageId;
         this.startingDate = startingDate;
         this.isLocked = isLocked;
@@ -43,6 +46,14 @@ public class TaskDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getStageId() {
@@ -106,5 +117,19 @@ public class TaskDto {
     @Override
     public int hashCode() {
         return Objects.hash(id, stageId, startingDate, isLocked, durationInWeeks, requiredCapacityInFTE, requiredCompetences);
+    }
+
+    @Override
+    public String toString() {
+        return "TaskDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", stageId=" + stageId +
+                ", startingDate=" + startingDate +
+                ", isLocked=" + isLocked +
+                ", durationInWeeks=" + durationInWeeks +
+                ", requiredCapacityInFTE=" + requiredCapacityInFTE +
+                ", requiredCompetences=" + requiredCompetences +
+                '}';
     }
 }

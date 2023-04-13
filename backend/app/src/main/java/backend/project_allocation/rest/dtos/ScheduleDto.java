@@ -10,7 +10,9 @@ import java.util.UUID;
 
 public class ScheduleDto {
 
-    private Long id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+    private Long id = 1L;
+
+    private Long version = 1L;
 
     private List<SkillDto> skills = new LinkedList<>();
 
@@ -29,8 +31,9 @@ public class ScheduleDto {
     public ScheduleDto() {
     }
 
-    public ScheduleDto(Long id, List<SkillDto> skills, List<ProjectDto> projects, List<ProjectStageDto> stages, List<TaskDto> tasks, List<EmployeeDto> employees, ConfigurationDto configurationParameters, ScoreDto score) {
+    public ScheduleDto(Long id, Long version, List<SkillDto> skills, List<ProjectDto> projects, List<ProjectStageDto> stages, List<TaskDto> tasks, List<EmployeeDto> employees, ConfigurationDto configurationParameters, ScoreDto score) {
         this.id = id;
+        this.version = version;
         this.skills = skills;
         this.projects = projects;
         this.stages = stages;
@@ -47,6 +50,15 @@ public class ScheduleDto {
     @JsonSetter(nulls = Nulls.SKIP)
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public List<SkillDto> getSkills() {
@@ -116,12 +128,27 @@ public class ScheduleDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ScheduleDto that = (ScheduleDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(skills, that.skills) && Objects.equals(projects, that.projects) && Objects.equals(stages, that.stages) && Objects.equals(tasks, that.tasks) && Objects.equals(employees, that.employees) && Objects.equals(configurationParameters, that.configurationParameters) && Objects.equals(score, that.score);
+        return Objects.equals(id, that.id) && Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, skills, projects, stages, tasks, employees, configurationParameters, score);
+        return Objects.hash(id, version);
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduleDto{" +
+                "id=" + id +
+                ", version=" + version +
+                ", skills=" + skills +
+                ", projects=" + projects +
+                ", stages=" + stages +
+                ", tasks=" + tasks +
+                ", employees=" + employees +
+                ", configurationParameters=" + configurationParameters +
+                ", score=" + score +
+                '}';
     }
 }
 
