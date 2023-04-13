@@ -4,7 +4,6 @@
     <!-- Define the model -->
     <solutionClass>backend.project_allocation.domain.Schedule</solutionClass>
     <entityClass>backend.project_allocation.domain.Task</entityClass>
-    <entityClass>backend.project_allocation.domain.Employee</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>

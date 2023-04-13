@@ -1,37 +1,34 @@
 {
-  "skills" : [{"id" : 1, "name" : "Java"},  {"id" : 2, "name" : "React"}],
+  "skills": [
+    {"id": 1, "name": "Java"},
+    {"id": 2, "name": "React"}
+  ],
 
-  "projects" : [
-      {"name" : "P1", "deadline" : "2024-07-21", "stages" : [
-          {"name" : "S1", "rank" : 1, "isIndependent" : false, "tasks" : [
-              {"id" : 2, "startingDate" : null, "durationInWeeks" : 10, "requiredCapacity" : 0.5, "requiredCompetences" : [{"skillId" : 1, "skillLevel" : "senior"}]},
-              {"id" : 3, "startingDate" : "2023-07-21", "durationInWeeks" : 4, "requiredCapacity" : 0.75, "requiredCompetences" : [{"skillId" : 2, "skillLevel" : "junior"}]}
-            ]
-          },
-          {"name" : "Other", "rank" : 2, "isIndependent" : true, "tasks" : []}
-        ]
-      }
+  "projects": [
+    {"id" : 1, "name": "P1", "deadline": "2024-07-21"},
+    {"id" : 2, "name": "P2", "deadline": "2023-09-11"},
+    {"id" : 3, "name": "P3"}
+  ],
+
+  "stages" : [
+    {"id" : 1, "projectId": 2, "name" : "Prepare", "rank" : -1, "isIndependent" : false},
+    {"id" : 2, "projectId": 2, "name" : "Implement", "rank" : 2, "isIndependent" : false},
+    {"id" : 3, "projectId": 2, "name" : "General", "rank" : 3, "isIndependent" : false},
+
+    {"id" : 4, "projectId": 2, "name" : "Example"}
+  ],
+
+  "tasks" : [
+    {"id" : 1, "name" :  "task1", "stageId" : 1, "startingDate" : "2023-04-10", "isLocked" : true, "durationInWeeks" : 10, "requiredCapacityInFTE" : 0.5, "requiredCompetences" : [{"skillId" : 1, "skillLevel" : "INTERMEDIATE"}]},
+    {"id" : 2, "name" :  "task2", "stageId" : 1, "startingDate" : "2023-06-19", "isLocked" : true, "durationInWeeks" : 10, "requiredCapacityInFTE" : 0.5, "requiredCompetences" : [{"skillId" : 1, "skillLevel" : "INTERMEDIATE"}]},
+
+    {"id" : 3, "name" :  "task3", "stageId" : 3, "startingDate" : "2023-07-21", "durationInWeeks" : 4, "requiredCapacityInFTE" : 0.75, "requiredCompetences" : [{"skillId" : 2, "skillLevel" : "JUNIOR"}]},
+    {"id" : 4, "name" :  "task4", "stageId" : 3, "durationInWeeks" : 4, "requiredCapacityInFTE" : 0.75, "requiredCompetences" : [{"skillId" : 2, "skillLevel" : "JUNIOR"}]}
   ],
 
   "employees" : [
-      {"firstname" : "John", "lastname" : "Smith", "competences" : [{"skillId" : 2, "skillLevel" : "junior"}], "employmentCapacity" : 1.0, "preferredTasks" : [2], "availability" : {"start" : "2022-01-01", "end" : "2023-01-01"}, "assignedTaskIds" : [3]}
+    {"firstname" : "Peter", "lastname" : "Young", "competences" : [{"skillId" : 1, "skillLevel" : "INTERMEDIATE"}], "capacityInFTE" : 0.5, "preferredTaskIds" : [], "availability" : {"start" : "2022-01-01", "end" : "2025-01-01"}, "assignedTaskIds" : [1,2]}
   ],
 
-  "configuration" : {
-      "numberOfWeeks" : 26,
-      "employeePossibleCapacityOverheadInFTE" : 0.2,
-      "constraintParams" : {
-        "skillWeight" : 10,
-        "hardUtilizationWeight" : 10,
-        "projectStageWeight" : 10,
-        "availabilityWeight" : 10,
-        "unassignedTaskWeight" : 10,
-        "skillLevelWeight" : 10,
-        "softUtilizationWeight" : 10,
-        "taskDelayWeight" : 10,
-        "deadlineWeight" : 10,
-        "preferenceWeight" : 10,
-        "freeWeekWeight" : 10
-      }
-  }
+  "configurationParameters" : {}
 }
