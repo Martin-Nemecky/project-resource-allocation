@@ -3,13 +3,28 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import { ScheduleProvider } from './contexts/ScheduleContext';
+import { StatusProvider } from './contexts/StatusContext';
+import { ScheduleHistoryProvider } from './contexts/HistoryContext';
+
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
   <React.StrictMode>
-    <App />
+    <ScheduleProvider>
+      <StatusProvider>
+        <ScheduleHistoryProvider>
+          <App />
+        </ScheduleHistoryProvider>
+      </StatusProvider>
+    </ScheduleProvider>
   </React.StrictMode>
 );
 
