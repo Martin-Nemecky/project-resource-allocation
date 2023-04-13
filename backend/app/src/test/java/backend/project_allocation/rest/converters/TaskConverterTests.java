@@ -27,9 +27,9 @@ public class TaskConverterTests {
         TaskConverter taskConverter = new TaskConverter(competenceConverter);
 
         ProjectStage projectStage = new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null));
-        TaskDto taskDto = new TaskDto(1L, 1L, null, false, 2, 0.5, List.of());
+        TaskDto taskDto = new TaskDto(1L, "task", 1L, null, false, 2, 0.5, List.of());
 
-        Task expected = new Task(1L,null,null,false,2,0.5, Map.of(), projectStage);
+        Task expected = new Task(1L, "task", null,null,false,2,0.5, Map.of(), projectStage);
         Task actual = taskConverter.fromDto(taskDto, Map.of(projectStage.getId(), projectStage), Map.of());
 
         assertEquals(expected, actual);
@@ -41,9 +41,9 @@ public class TaskConverterTests {
         TaskConverter taskConverter = new TaskConverter(competenceConverter);
 
         ProjectStage projectStage = new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null));
-        Task task = new Task(1L,null,null,false,2,0.5, Map.of(), projectStage);
+        Task task = new Task(1L, "task", null,null,false,2,0.5, Map.of(), projectStage);
 
-        TaskDto expected = new TaskDto(1L, 1L, null, false, 2, 0.5, List.of());
+        TaskDto expected = new TaskDto(1L, "task", 1L, null, false, 2, 0.5, List.of());
         TaskDto actual = taskConverter.toDto(task);
 
         assertEquals(expected, actual);

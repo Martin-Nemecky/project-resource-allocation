@@ -35,8 +35,8 @@ public class EmployeeConverterTests {
     public void convertFromDto(){
         EmployeeConverter converter = new EmployeeConverter(competenceConverter, taskConverter, intervalConverter);
 
-        Task task1 = new Task(1L,null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
-        Task task2 = new Task(2L,null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
+        Task task1 = new Task(1L, "task1", null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
+        Task task2 = new Task(2L, "task2", null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
         Map<Long, Task> tasks = Map.of(task1.getId(), task1, task2.getId(), task2);
 
         EmployeeDto dto = new EmployeeDto("John", "Smith", List.of(new CompetenceDto(1L, SkillLevelDto.JUNIOR)), 0.5, List.of(1L), new IntervalDto(LocalDate.MIN, LocalDate.MAX), List.of(2L));
@@ -53,7 +53,6 @@ public class EmployeeConverterTests {
         assertEquals((int) (0.5 * 40), result.getCapacityInHoursPerWeek());
         assertEquals(List.of(task1), result.getPreferredTasks());
         assertEquals(new Interval(LocalDate.MIN, LocalDate.MAX), result.getAvailability());
-        assertEquals(Set.of(task2), result.getAssignedTasks());
     }
 
     @Test
@@ -61,20 +60,19 @@ public class EmployeeConverterTests {
     public void convertToDto(){
         EmployeeConverter converter = new EmployeeConverter(competenceConverter, taskConverter, intervalConverter);
 
-        Task task1 = new Task(1L,null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
-        TaskDto taskDto1 = new TaskDto(1L, 1L, null, false, 2, 0.5, List.of());
-        Task task2 = new Task(2L,null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
-        TaskDto taskDto2 = new TaskDto(2L, 1L, null, false, 2, 0.5, List.of());
+        Task task1 = new Task(1L,"task1",null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
+        TaskDto taskDto1 = new TaskDto(1L, "task1", 1L, null, false, 2, 0.5, List.of());
+        Task task2 = new Task(2L, "task2", null,null,false,2,0.5, Map.of(), new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null)));
+        TaskDto taskDto2 = new TaskDto(2L, "task2", 1L, null, false, 2, 0.5, List.of());
 
-        Employee employee = new Employee("John", "Smith", Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR), 0.5, List.of(task1), new Interval(LocalDate.MIN, LocalDate.MAX), Set.of(task2));
+        Employee employee = new Employee("John", "Smith", Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR), 0.5, List.of(task1), new Interval(LocalDate.MIN, LocalDate.MAX));
 
         Mockito.when(competenceConverter.toDtoList(Mockito.any())).thenReturn(List.of(new CompetenceDto(1L, SkillLevelDto.JUNIOR)));
         Mockito.when(taskConverter.toDtoList(Mockito.anyList())).thenReturn(List.of(taskDto1));
-        Mockito.when(taskConverter.toDtoList(Mockito.anySet())).thenReturn(List.of(taskDto2));
         Mockito.when(intervalConverter.toDto(Mockito.any())).thenReturn(new IntervalDto(LocalDate.MIN, LocalDate.MAX));
 
         EmployeeDto expected = new EmployeeDto("John", "Smith", List.of(new CompetenceDto(1L, SkillLevelDto.JUNIOR)), 0.5, List.of(task1.getId()), new IntervalDto(LocalDate.MIN, LocalDate.MAX), List.of(task2.getId()));
-        EmployeeDto actual = converter.toDto(employee);
+        EmployeeDto actual = converter.toDto(employee, List.of(task1, task2));
 
         assertEquals(expected, actual);
     }
