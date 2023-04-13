@@ -20,7 +20,8 @@ public class PreferenceConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1)
     );
 
     private final List<Project> projects = List.of(
@@ -32,15 +33,13 @@ public class PreferenceConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L, null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L, null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(3L, null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L, "", null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(3L, "", null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, List.of(tasks.get(0), tasks.get(1)), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, List.of(tasks.get(0), tasks.get(1)), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void preferenceConflict() {
@@ -55,20 +54,16 @@ public class PreferenceConflictTests {
         task2.setAssignedEmployee(employee);
         task2.setStartingDate(startingDates.get(0));
 
-        //assign tasks to employee
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1,
-                task2
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0
         );
 
-        int expectedReward = 59; //30 + 29 (task1 has higher preference and lower preference)
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::preferenceConflict)
                 .givenSolution(solution)
-                .rewardsWith(expectedReward * solution.getConstraintConfiguration().getPreferenceConflict());
+                .rewardsWith(2);
     }
 }

@@ -20,7 +20,7 @@ public class SkillLevelConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue())
     );
 
     private final List<Project> projects = List.of(
@@ -32,13 +32,11 @@ public class SkillLevelConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.SENIOR), stages.get(0))
+            new Task(1L, "", null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.SENIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void skillLevelConflict() {
@@ -49,19 +47,16 @@ public class SkillLevelConflictTests {
         task1.setAssignedEmployee(employee);
         task1.setStartingDate(startingDates.get(0));
 
-        //assign tasks to employee
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
         );
 
-        int skillLevelMismatch = 10; //there is only one conflict (by 2 levels), but assigning Junior -> Senior is penalized for each level
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::skillLevelConflict)
                 .givenSolution(solution)
-                .penalizesBy(skillLevelMismatch * solution.getConstraintConfiguration().getSkillLevelConflict());
+                .penalizesBy(10); //there is only one conflict (by 2 levels), but assigning Junior -> Senior is penalized for each level
     }
 }

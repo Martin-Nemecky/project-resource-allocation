@@ -19,7 +19,8 @@ public class AvailabilityConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1)
     );
 
     private final List<Project> projects = List.of(
@@ -31,13 +32,11 @@ public class AvailabilityConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L, null, null, false, 2, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null, null, false, 2, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(LocalDate.now(), LocalDate.now().plusWeeks(1)), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(startingDates.get(0), startingDates.get(1)))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void availabilityConflict() {
@@ -48,18 +47,14 @@ public class AvailabilityConflictTests {
         task.setAssignedEmployee(employee);
         task.setStartingDate(startingDates.get(0));
 
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
         );
 
-        int availabilityOffsetInWeeks = 1;
+        Schedule solution = new Schedule(1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig);
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::availabilityConflict)
                 .givenSolution(solution)
-                .penalizesBy(availabilityOffsetInWeeks * solution.getConstraintConfiguration().getAvailabilityConflict());
+                .penalizesBy(1);
     }
 }

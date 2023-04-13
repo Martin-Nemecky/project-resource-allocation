@@ -21,9 +21,9 @@ public class ProjectStageConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now(),
-            LocalDate.now().plusWeeks(1),
-            LocalDate.now().plusWeeks(2)
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(2)
     );
 
     private final List<Project> projects = List.of(
@@ -37,15 +37,13 @@ public class ProjectStageConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L, null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L, null,null,false,1,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(1)),
-            new Task(3L, null,null,false,1,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(2))
+            new Task(1L, "", null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L, "", null,null,false,1,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(1)),
+            new Task(3L, "", null,null,false,1,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(2))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void projectStageConflict() {
@@ -64,21 +62,16 @@ public class ProjectStageConflictTests {
         task3.setAssignedEmployee(employee);
         task3.setStartingDate(startingDates.get(0));
 
-        //assign tasks to employee
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1,
-                task2,
-                task3
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
         );
 
-        int numberOfBrokenConstraints = 2; // task 3 is before task 1 and task 2
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::projectStageConflict)
                 .givenSolution(solution)
-                .penalizesBy(numberOfBrokenConstraints * solution.getConstraintConfiguration().getProjectStageConflict());
+                .penalizesBy(2); // task 3 is before task 1 and task 2
     }
 }

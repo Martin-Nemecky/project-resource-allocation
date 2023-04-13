@@ -20,7 +20,9 @@ public class FreeEmployeeWeeksConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(2)
     );
 
     private final List<Project> projects = List.of(
@@ -32,14 +34,12 @@ public class FreeEmployeeWeeksConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L, null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), LocalDate.now().plusWeeks(1)), new HashSet<>()),
-            new Employee("James", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), LocalDate.now().plusWeeks(1)), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), startingDates.get(2))),
+            new Employee("James", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), startingDates.get(2)))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void freeEmployeeWeeksConflict() {
@@ -50,17 +50,16 @@ public class FreeEmployeeWeeksConflictTests {
         task1.setAssignedEmployee(employee1);
         task1.setStartingDate(startingDates.get(0));
 
-        employee1.setAssignedTasks(new HashSet<>(Set.of(
-                task1
-        )));
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
         );
 
-        int freeWeekCount = 1;
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::freeEmployeeWeeksConflict)
                 .givenSolution(solution)
-                .rewardsWith(freeWeekCount * solution.getConstraintConfiguration().getFreeEmployeeWeeksConflict());
+                .rewardsWith(3);
     }
 }

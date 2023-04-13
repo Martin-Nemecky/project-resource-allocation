@@ -20,7 +20,8 @@ public class OverUtilizationConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1)
     );
 
     private final List<Project> projects = List.of(
@@ -32,14 +33,12 @@ public class OverUtilizationConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L, null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L, null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L, "", null, null, false, 1, 0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void overUtilizationConflict() {
@@ -54,19 +53,16 @@ public class OverUtilizationConflictTests {
         task2.setAssignedEmployee(employee);
         task2.setStartingDate(startingDates.get(0));
 
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1, task2
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
         );
 
-        int overUtilizationInHours =
-                task1.getRequiredCapacityInHoursPerWeek() + task2.getRequiredCapacityInHoursPerWeek() - employee.getCapacityInHoursPerWeek() - (int) (configuration.getEmployeePossibleCapacityOverheadInFTE() * 40);
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::overUtilizationConflict)
                 .givenSolution(solution)
-                .penalizesBy(overUtilizationInHours * solution.getConstraintConfiguration().getOverUtilizationConflict());
+                .penalizesBy(20);
     }
 }

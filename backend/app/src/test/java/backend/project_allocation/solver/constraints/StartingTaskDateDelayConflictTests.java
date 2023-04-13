@@ -20,8 +20,8 @@ public class StartingTaskDateDelayConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now(),
-            LocalDate.now().plusWeeks(1)
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()),
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).plusWeeks(1)
     );
 
     private final List<Project> projects = List.of(
@@ -33,13 +33,11 @@ public class StartingTaskDateDelayConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.SENIOR), stages.get(0))
+            new Task(1L,"", null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.SENIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void startingTaskDateDelayConflict() {
@@ -50,19 +48,16 @@ public class StartingTaskDateDelayConflictTests {
         task1.setAssignedEmployee(employee);
         task1.setStartingDate(startingDates.get(1));
 
-        //assign tasks to employee
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
         );
 
-        int taskDelayInWeeks = 1;
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::startingTaskDateDelayConflict)
                 .givenSolution(solution)
-                .penalizesBy(taskDelayInWeeks * solution.getConstraintConfiguration().getStartingTaskDateDelayConflict());
+                .penalizesBy(1);
     }
 }

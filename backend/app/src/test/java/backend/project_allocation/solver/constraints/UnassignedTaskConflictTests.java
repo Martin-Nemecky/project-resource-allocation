@@ -20,7 +20,7 @@ public class UnassignedTaskConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue())
     );
 
     private final List<Project> projects = List.of(
@@ -32,15 +32,13 @@ public class UnassignedTaskConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(3L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L,"",null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L,"",null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(3L,"",null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void unassignedTaskConflict() {
@@ -51,19 +49,17 @@ public class UnassignedTaskConflictTests {
         task1.setAssignedEmployee(employee);
         task1.setStartingDate(startingDates.get(0));
 
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
         );
 
-        int unassignedTasks = tasks.size() - 1; // for every task except task 1
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::unassignedTaskConflict)
                 .givenSolution(solution)
-                .penalizesBy(unassignedTasks * solution.getConstraintConfiguration().getUnassignedTaskConflict());
+                .penalizesBy(tasks.size() - 1); // for every task except task 1
     }
 
 }

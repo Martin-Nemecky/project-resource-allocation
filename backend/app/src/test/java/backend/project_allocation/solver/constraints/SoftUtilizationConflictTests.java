@@ -20,7 +20,7 @@ public class SoftUtilizationConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue())
     );
 
     private final List<Project> projects = List.of(
@@ -32,14 +32,12 @@ public class SoftUtilizationConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L,null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L,null,null,false,1,0.3, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null,null,false,1,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L, "",null,null,false,1,0.3, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 0.5, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void softUtilizationConflict() {
@@ -54,26 +52,17 @@ public class SoftUtilizationConflictTests {
         task2.setAssignedEmployee(employee);
         task2.setStartingDate(startingDates.get(0));
 
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1,
-                task2
-        )));
-
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+        );
 
         Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
         );
-        double defaultValue = configuration.getEmployeePossibleCapacityOverheadInFTE();
-        configuration.setEmployeePossibleCapacityOverheadInFTE(0.5);
 
-        int softUtilizationInHours = task1.getRequiredCapacityInHoursPerWeek() + task2.getRequiredCapacityInHoursPerWeek() - employee.getCapacityInHoursPerWeek();
-
-        System.out.println("Hours : " + softUtilizationInHours);
         constraintVerifier.verifyThat(ScheduleConstraintProvider::softUtilizationConflict)
                 .givenSolution(solution)
-                .penalizesBy(softUtilizationInHours * solution.getConstraintConfiguration().getSoftUtilizationConflict());
-
-        configuration.setEmployeePossibleCapacityOverheadInFTE(defaultValue);
+                .penalizesBy(12);
     }
 
 }

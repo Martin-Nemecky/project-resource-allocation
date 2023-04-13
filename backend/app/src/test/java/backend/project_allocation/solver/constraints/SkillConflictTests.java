@@ -21,7 +21,7 @@ public class SkillConflictTests {
     );
 
     private final List<LocalDate> startingDates = List.of(
-            LocalDate.now()
+            LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue())
     );
 
     private final List<Project> projects = List.of(
@@ -33,15 +33,13 @@ public class SkillConflictTests {
     );
 
     private final List<Task> tasks = List.of(
-            new Task(1L,null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(2L,null,null,false,2,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(0)),
-            new Task(3L,null,null,false,2,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(0))
+            new Task(1L, "", null,null,false,2,0.5, Map.of(skills.get(0), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(2L, "", null,null,false,2,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(0)),
+            new Task(3L, "", null,null,false,2,0.5, Map.of(skills.get(1), SkillLevel.JUNIOR), stages.get(0))
     );
     private final List<Employee> employees = List.of(
-            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>())
+            new Employee("John", "Smith", Map.of(skills.get(0), SkillLevel.JUNIOR), 1.0, new ArrayList<>(), new Interval(startingDates.get(0), null))
     );
-
-    private final ScheduleConstraintConfiguration configuration = new ScheduleConstraintConfiguration();
 
     @Test
     public void skillConflict() {
@@ -60,21 +58,16 @@ public class SkillConflictTests {
         task3.setAssignedEmployee(employee);
         task3.setStartingDate(startingDates.get(0));
 
-        //assign tasks to employee
-        employee.setAssignedTasks(new HashSet<>(Set.of(
-                task1,
-                task2,
-                task3
-        )));
-
-
-        Schedule solution = new Schedule(
-                1L, skills, projects, stages, tasks, startingDates, employees, configuration
+        ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
+                26, 60, 0.0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         );
 
-        int numberOfBrokenConstraints = 2; // for taskId 2 and 3
+        Schedule solution = new Schedule(
+                1L, 1L, skills, projects, stages, tasks, startingDates, employees, customConfig
+        );
+
         constraintVerifier.verifyThat(ScheduleConstraintProvider::skillConflict)
                 .givenSolution(solution)
-                .penalizesBy(numberOfBrokenConstraints * solution.getConstraintConfiguration().getSkillConflict());
+                .penalizesBy(2); // for taskId 2 and 3
     }
 }
