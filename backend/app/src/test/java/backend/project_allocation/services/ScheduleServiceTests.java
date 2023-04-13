@@ -35,7 +35,7 @@ public class ScheduleServiceTests {
     @DisplayName("Calling solve live")
     public void solveLive(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
-        Schedule schedule = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
 
         Mockito.when(builder.withTermination(60L)).thenReturn(builder);
         Mockito.when(builder.build()).thenReturn(solverManager);
@@ -45,28 +45,33 @@ public class ScheduleServiceTests {
         Mockito.verify(solverManager, Mockito.times(1)).solveAndListen(Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.verify(scheduleInMemoryRepository, Mockito.times(1)).clear();
         Mockito.verify(scheduleInMemoryRepository, Mockito.times(1)).save(Mockito.any());
+
+        scheduleService.clear();
     }
 
     @Test
     @DisplayName("Stop solving")
     public void stopSolving(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
-        Schedule schedule = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
 
         Mockito.when(builder.withTermination(60L)).thenReturn(builder);
         Mockito.when(builder.build()).thenReturn(solverManager);
+        Mockito.when(scheduleInMemoryRepository.findById(1L)).thenReturn(Optional.of(schedule));
 
         scheduleService.solveLive(schedule, 60L);
         scheduleService.stopSolving(1L);
 
         Mockito.verify(solverManager, Mockito.times(1)).terminateEarly(Mockito.anyLong());
+
+        scheduleService.clear();
     }
 
     @Test
     @DisplayName("Find best solution")
     public void findBest(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
-        Schedule schedule = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
 
         Mockito.when(scheduleInMemoryRepository.findLast()).thenReturn(Optional.of(schedule));
 
@@ -89,7 +94,7 @@ public class ScheduleServiceTests {
     public void findById(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
         Long id = 1L;
-        Schedule schedule = new Schedule(id, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(id, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
         Mockito.when(scheduleInMemoryRepository.findById(id)).thenReturn(Optional.of(schedule));
 
         Schedule result = scheduleService.findById(id);
@@ -116,9 +121,15 @@ public class ScheduleServiceTests {
     @DisplayName("Save a schedule")
     public void saveSchedule(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
-        Schedule schedule = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+
+        Schedule schedule = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(), HardMediumSoftScore.ONE_HARD);
+
         scheduleService.save(schedule);
+
         Mockito.verify(scheduleInMemoryRepository, Mockito.times(1)).save(schedule);
+        assertEquals(2L, Schedule.getVersionNumber());
+
+        scheduleService.clear();
     }
 
     @Test
@@ -133,6 +144,7 @@ public class ScheduleServiceTests {
     public void clearRepository(){
         ScheduleService scheduleService = new ScheduleService(scheduleInMemoryRepository, builder);
         scheduleService.clear();
+        assertEquals(1L, Schedule.getVersionNumber());
         Mockito.verify(scheduleInMemoryRepository, Mockito.times(1)).clear();
     }
 }
