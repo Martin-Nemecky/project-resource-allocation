@@ -224,4 +224,24 @@ public class ScheduleConstraintConfiguration implements Cloneable{
                 getFreeEmployeeWeeksConflict()
         );
     }
+
+    @Override
+    public String toString() {
+        return "ScheduleConstraintConfiguration{" +
+                "scheduleLengthInWeeks=" + scheduleLengthInWeeks +
+                ", terminationTimeInMinutes=" + terminationTimeInMinutes +
+                ", employeePossibleCapacityOverheadInFTE=" + employeePossibleCapacityOverheadInFTE +
+                ", skillConflict=" + skillConflict +
+                ", overUtilizationConflict=" + overUtilizationConflict +
+                ", projectStageConflict=" + projectStageConflict +
+                ", availabilityConflict=" + availabilityConflict +
+                ", unassignedTaskConflict=" + unassignedTaskConflict +
+                ", softUtilizationConflict=" + softUtilizationConflict +
+                ", skillLevelConflict=" + skillLevelConflict +
+                ", startingTaskDateDelayConflict=" + startingTaskDateDelayConflict +
+                ", exceededProjectDeadlineConflict=" + exceededProjectDeadlineConflict +
+                ", preferenceConflict=" + preferenceConflict +
+                ", freeEmployeeWeeksConflict=" + freeEmployeeWeeksConflict +
+                '}';
+    }
 }

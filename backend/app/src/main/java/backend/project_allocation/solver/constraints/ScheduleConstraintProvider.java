@@ -1,17 +1,12 @@
 package backend.project_allocation.solver.constraints;
 
 import backend.project_allocation.domain.*;
-import backend.project_allocation.domain.other.Pair;
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
-import org.optaplanner.core.api.score.stream.Constraint;
-import org.optaplanner.core.api.score.stream.ConstraintFactory;
-import org.optaplanner.core.api.score.stream.ConstraintProvider;
-import org.optaplanner.core.api.score.stream.Joiners;
+import org.optaplanner.core.api.score.stream.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 
 public class ScheduleConstraintProvider implements ConstraintProvider {
 
@@ -42,9 +37,13 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     protected Constraint skillConflict(ConstraintFactory constraintFactory) {
 
         return constraintFactory
-                .forEach(Task.class)
+                .forEachIncludingNullVars(Task.class)
                 .join(ScheduleConstraintConfiguration.class)
                 .filter((task, config) -> {
+                    if(task.getAssignedEmployee() == null){
+                        return false;
+                    }
+
                     Map<Skill, SkillLevel> employeeCompetences = task.getAssignedEmployee().getCompetences();
                     for (Skill requiredSkill : task.getRequiredCompetences().keySet()) {
                         boolean requirementIsMet = employeeCompetences.containsKey(requiredSkill);
@@ -79,16 +78,25 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     }
 
     protected Constraint overUtilizationConflict(ConstraintFactory constraintFactory) {
-
         return constraintFactory
-                .forEach(Employee.class)
+                .forEach(Task.class)
+                .join(Employee.class, Joiners.equal(Task::getAssignedEmployee, Function.identity()))
+                .join(LocalDate.class, Joiners.filtering((task, employee, date) -> (task.getStartingDate().isEqual(date) || task.getStartingDate().isBefore(date)) && (task.getEndDate().isAfter(date))))
+                .groupBy(
+                        (task, employee, date) -> date,
+                        (task, employee, date) -> employee,
+                        ConstraintCollectors.sum((task, employee, date) -> task.getRequiredCapacityInHoursPerWeek()))
                 .join(ScheduleConstraintConfiguration.class)
                 .penalize(
                         HardMediumSoftScore.ONE_HARD,
-                        (employee, config) -> {
-                            int configParam = config.getOverUtilizationConflict();
-                            int hardUtilization = calculateHardUtilization(employee, (int) (config.getEmployeePossibleCapacityOverheadInFTE() * 40), config.getScheduleLengthInWeeks());
-                            return configParam * hardUtilization;
+                        (date, employee, value, config) -> {
+                            int employeeCapacity = employee.getCapacityInHoursPerWeek();
+                            int capacityOverhead = (int)(config.getEmployeePossibleCapacityOverheadInFTE() * 40);
+                            if(value > employeeCapacity + capacityOverhead){
+                                return (value - employeeCapacity - capacityOverhead) * config.getOverUtilizationConflict();
+                            }
+
+                            return 0;
                         }
                 )
                 .asConstraint("Over utilization conflict");
@@ -97,24 +105,32 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     protected Constraint availabilityConflict(ConstraintFactory constraintFactory) {
 
         return constraintFactory
-                .forEach(Task.class)
+                .forEachIncludingNullVars(Task.class)
                 .join(ScheduleConstraintConfiguration.class)
+                .filter((task, config) -> {
+                    if(task.getAssignedEmployee() == null){
+                        return false;
+                    } else if (task.getStartingDate() == null){
+                        return true;
+                    }
+
+                    Employee employee = task.getAssignedEmployee();
+                    LocalDate start = employee.getAvailability().getStart();
+                    LocalDate end = employee.getAvailability().getEnd();
+                    if(start.isAfter(task.getStartingDate()) || end.isBefore(task.getEndDate())){
+                        return true;
+                    }
+
+                    return false;
+                })
                 .penalize(
                         HardMediumSoftScore.ONE_HARD,
-                        (task, config) -> {
-                            Employee employee = task.getAssignedEmployee();
-                            Interval taskInterval = new Interval(task.getStartingDate(), task.getEndDate());
-
-                            int offset = calculateIntervalOffset(new Pair<>(employee.getAvailability(), taskInterval));
-                            int configParam = config.getAvailabilityConflict();
-                            return configParam * offset;
-                        }
+                        (task, config) -> config.getAvailabilityConflict()
                 )
                 .asConstraint("Availability conflict");
     }
 
     protected Constraint unassignedTaskConflict(ConstraintFactory constraintFactory) {
-
         return constraintFactory
                 .forEachIncludingNullVars(Task.class)
                 .filter(task -> task.getStartingDate() == null || task.getAssignedEmployee() == null)
@@ -125,14 +141,24 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
 
     protected Constraint softUtilizationConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEach(Employee.class)
+                .forEach(Task.class)
+                .join(Employee.class, Joiners.equal(Task::getAssignedEmployee, Function.identity()))
+                .join(LocalDate.class, Joiners.filtering((task, employee, date) -> (task.getStartingDate().isEqual(date) || task.getStartingDate().isBefore(date)) && (task.getEndDate().isAfter(date))))
+                .groupBy(
+                        (task, employee, date) -> date,
+                        (task, employee, date) -> employee,
+                        ConstraintCollectors.sum((task, employee, date) -> task.getRequiredCapacityInHoursPerWeek()))
                 .join(ScheduleConstraintConfiguration.class)
                 .penalize(
                         HardMediumSoftScore.ONE_SOFT,
-                        (employee, config) -> {
-                            int configParam = config.getSoftUtilizationConflict();
-                            int softUtilization = calculateSoftUtilization(employee, (int) (config.getEmployeePossibleCapacityOverheadInFTE() * 40), config.getScheduleLengthInWeeks());
-                            return configParam * softUtilization;
+                        (date, employee, value, config) -> {
+                            int employeeCapacity = employee.getCapacityInHoursPerWeek();
+                            int capacityOverhead = (int)(config.getEmployeePossibleCapacityOverheadInFTE() * 40);
+                            if(value > employeeCapacity && value <= employeeCapacity + capacityOverhead){
+                                return (value - employeeCapacity) * config.getSoftUtilizationConflict();
+                            }
+
+                            return 0;
                         }
                 )
                 .asConstraint("Soft utilization conflict");
@@ -177,8 +203,8 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                 .penalize(
                         HardMediumSoftScore.ONE_SOFT,
                         (task, config) -> {
-                            LocalDate start = task.getStartingDate();
-                            int diff = ((int) (start.toEpochDay() - LocalDate.now().toEpochDay())) / 7;
+                            LocalDate taskEnd = task.getEndDate();
+                            int diff = (int) ((taskEnd.toEpochDay() - LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue()).toEpochDay()) / 7);
                             return Math.max(diff, 0) * config.getStartingTaskDateDelayConflict();
                         }
                 )
@@ -205,26 +231,12 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
 
     protected Constraint preferenceConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEach(Employee.class)
+                .forEach(Task.class)
+                .ifExists(Employee.class, Joiners.filtering((task, employee) -> task.getAssignedEmployee().equals(employee) && employee.getPreferredTasks().contains(task)))
                 .join(ScheduleConstraintConfiguration.class)
                 .reward(
                         HardMediumSoftScore.ONE_SOFT,
-                        (employee, config) -> {
-                            List<Task> preferences = employee.getPreferredTasks();
-                            Set<Task> assignedTasks = employee.getAssignedTasks();
-
-                            int score = 0;
-                            int preferenceBudget = 30; //hard-coded value for maximum number of preferences (the reason for this solution is to make sure all preferences of all employees have the same max value)
-                            for (Task assignedTask : assignedTasks) {
-                                for (int i = 0; i < preferences.size(); i++) {
-                                    if (assignedTask.equals(preferences.get(i))) {
-                                        score += Math.max(preferenceBudget - i, 1);
-                                    }
-                                }
-                            }
-
-                            return score * config.getPreferenceConflict();
-                        }
+                        (task, config) ->  config.getPreferenceConflict()
                 )
                 .asConstraint("Preference conflict");
     }
@@ -232,23 +244,26 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     protected Constraint freeEmployeeWeeksConflict(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Employee.class)
+                .join(LocalDate.class)
+                .ifNotExists(Task.class, Joiners.filtering((employee, date, task) -> {
+                    if(task.getAssignedEmployee().equals(employee)){
+                        return ((task.getStartingDate().isEqual(date) || task.getStartingDate().isBefore(date)) && (task.getEndDate().isAfter(date)));
+                    } else {
+                        return false;
+                    }
+                }))
                 .join(ScheduleConstraintConfiguration.class)
                 .reward(
                         HardMediumSoftScore.ONE_SOFT,
-                        (employee, config) -> {
-                            LocalDate now = LocalDate.now();
-                            LocalDate availabilityStart = employee.getAvailability().getStart();
-                            LocalDate availabilityEnd = employee.getAvailability().getEnd();
-                            int[] capacities = calculateUtilization(employee, config.getScheduleLengthInWeeks());
+                        (employee, date, config) -> {
+                            LocalDate start = employee.getAvailability().getStart();
+                            LocalDate end = employee.getAvailability().getEnd();
 
-                            int score = 0;
-                            for (int i = 0; i < capacities.length; i++) {
-                                if (capacities[i] == 0 && ! availabilityStart.isAfter(now.plusWeeks(i)) && availabilityEnd.isAfter(now.plusWeeks(i))) {
-                                    score++;
-                                }
+                            if((start.isEqual(date) || start.isBefore(date)) && date.isBefore(end)){
+                                return config.getFreeEmployeeWeeksConflict();
                             }
 
-                            return score * config.getFreeEmployeeWeeksConflict();
+                            return 0;
                         }
                 )
                 .asConstraint("Free employee weeks conflict");
@@ -257,79 +272,86 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     // ************************************************************************
     // Helper methods
     // ************************************************************************
-    public int[] calculateUtilization(Employee entity, int scheduleLengthInWeeks) {
-        Set<Task> tasks = entity.getAssignedTasks();
-        int[] weeks = new int[scheduleLengthInWeeks];
-        long now = LocalDate.now().toEpochDay();
-
-        for (Task task : tasks) {
-            if (task.getStartingDate() == null) continue;
-            int idxOfStart = (int) (task.getStartingDate().toEpochDay() - now) / 7;
-            int idxOfEnd = idxOfStart + task.getDurationInWeeks();
-
-            if (idxOfStart < 0) {
-                idxOfStart = 0;
-            }
-            if (idxOfEnd < 0) {
-                idxOfEnd = 0;
-            }
-
-            weeks[idxOfStart] += task.getRequiredCapacityInHoursPerWeek();
-            if (idxOfEnd < 26) {
-                weeks[idxOfEnd] -= task.getRequiredCapacityInHoursPerWeek();
-            }
-        }
-
-        int[] capacities = new int[scheduleLengthInWeeks];
-        int traverse = 0;
-        for (int i = 0; i < scheduleLengthInWeeks; i++) {
-            traverse += weeks[i];
-            capacities[i] = traverse;
-        }
-
-        return capacities;
-    }
-
-    public int calculateSoftUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
-        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
-
-        int count = 0;
-        for (int capacity : capacities) {
-            if (capacity > employee.getCapacityInHoursPerWeek() && capacity <= employee.getCapacityInHoursPerWeek() + capacityOverhead) {
-                count += capacity - employee.getCapacityInHoursPerWeek();
-            }
-        }
-
-        return count;
-    }
-
-    public int calculateHardUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
-        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
-
-        int count = 0;
-        for (int capacity : capacities) {
-            if (capacity > employee.getCapacityInHoursPerWeek() + capacityOverhead) {
-                count += capacity - employee.getCapacityInHoursPerWeek() - capacityOverhead;
-            }
-        }
-
-        return count;
-    }
-
-    public int calculateIntervalOffset(Pair<Interval, Interval> entity) {
-        Interval outer = entity.getFirst();
-        Interval inner = entity.getSecond();
-
-        int startOffset = (int) ((outer.getStart().toEpochDay() - inner.getStart().toEpochDay()) / 7);
-        int endOffset = (int) ((inner.getEnd().toEpochDay() - outer.getEnd().toEpochDay()) / 7);
-
-        if (startOffset < 0 && endOffset < 0)
-            return 0;
-        else if (startOffset < 0 && endOffset > 0)
-            return endOffset;
-        else if (startOffset > 0 && endOffset < 0)
-            return startOffset;
-        else
-            return startOffset + endOffset;
-    }
+//    public int[] calculateUtilization(Employee entity, int scheduleLengthInWeeks) {
+//        Set<Task> tasks = entity.getAssignedTasks();
+//        int[] weeks = new int[scheduleLengthInWeeks];
+//        LocalDate now = LocalDate.now();
+//        LocalDate nextMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
+//
+//        for (Task task : tasks) {
+//            if (task.getStartingDate() == null) continue;
+//            int idxOfStart = (int) ((task.getStartingDate().toEpochDay() - nextMonday.toEpochDay()) / 7.0);
+//            int idxOfEnd = idxOfStart + task.getDurationInWeeks();
+//
+//            if (idxOfStart < 0) {
+//                idxOfStart = 0;
+//            }
+//            if (idxOfEnd < 0) {
+//                idxOfEnd = 0;
+//            }
+//
+//            if(idxOfStart < scheduleLengthInWeeks) {
+//                weeks[idxOfStart] += task.getRequiredCapacityInHoursPerWeek();
+//            }
+//
+//            if (idxOfEnd < scheduleLengthInWeeks) {
+//                weeks[idxOfEnd] -= task.getRequiredCapacityInHoursPerWeek();
+//            }
+//        }
+//        int[] capacities = new int[scheduleLengthInWeeks];
+//        int traverse = 0;
+//        for (int i = 0; i < scheduleLengthInWeeks; i++) {
+//            traverse += weeks[i];
+//            capacities[i] = traverse;
+//        }
+//
+//        return capacities;
+//    }
+//
+//    public int calculateSoftUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
+//        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
+//
+//        int count = 0;
+//        for (int capacity : capacities) {
+//            if (capacity > employee.getCapacityInHoursPerWeek() && capacity <= employee.getCapacityInHoursPerWeek() + capacityOverhead) {
+//                count += capacity - employee.getCapacityInHoursPerWeek();
+//            }
+//        }
+//
+//        return count;
+//    }
+//
+//    public int calculateHardUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
+//        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
+//
+//        int count = 0;
+//        for (int capacity : capacities) {
+//            if (capacity > employee.getCapacityInHoursPerWeek() + capacityOverhead) {
+//                count += capacity - employee.getCapacityInHoursPerWeek() - capacityOverhead;
+//            }
+//        }
+//
+//        return count;
+//    }
+//
+//    public int calculateIntervalOffset(Pair<Interval, Interval> entity) {
+//        Interval outer = entity.getFirst();
+//        Interval inner = entity.getSecond();
+//
+//        int startOffset = (int) ((outer.getStart().toEpochDay() - inner.getStart().toEpochDay()) / 7);
+//        int endOffset = (int) ((inner.getEnd().toEpochDay() - outer.getEnd().toEpochDay()) / 7);
+//
+//        if (startOffset < 0 && endOffset < 0)
+//            return 0;
+//        else if (startOffset < 0 && endOffset > 0)
+//            return endOffset;
+//        else if (startOffset > 0 && endOffset < 0)
+//            return startOffset;
+//        else
+//            return startOffset + endOffset;
+//    }
+//
+//    public boolean isOverlapping(Interval a, Interval b){
+//        return !a.getStart().isAfter(b.getEnd()) && !b.getStart().isAfter(a.getEnd());
+//    }
 }
