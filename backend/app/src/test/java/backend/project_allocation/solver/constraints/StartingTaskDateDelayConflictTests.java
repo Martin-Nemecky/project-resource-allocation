@@ -58,6 +58,6 @@ public class StartingTaskDateDelayConflictTests {
 
         constraintVerifier.verifyThat(ScheduleConstraintProvider::startingTaskDateDelayConflict)
                 .givenSolution(solution)
-                .penalizesBy(1);
+                .penalizesBy(3);
     }
 }
