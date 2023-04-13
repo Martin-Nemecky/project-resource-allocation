@@ -16,6 +16,8 @@ public class Task implements Cloneable {
     @PlanningId
     private Long id;
 
+    private String name;
+
     @PlanningVariable(nullable = true)
     private LocalDate startingDate;
 
@@ -36,8 +38,9 @@ public class Task implements Cloneable {
     public Task() {
     }
 
-    public Task(Long id, LocalDate startingDate, Employee assignedEmployee, boolean isLocked, int durationInWeeks, double requiredCapacityInFTE, Map<Skill, SkillLevel> requiredCompetences,  ProjectStage projectStage) {
+    public Task(Long id, String name, LocalDate startingDate, Employee assignedEmployee, boolean isLocked, int durationInWeeks, double requiredCapacityInFTE, Map<Skill, SkillLevel> requiredCompetences,  ProjectStage projectStage) {
         this.id = Ensure.notNull(id, "Task id field cannot be null");
+        this.name = Ensure.notNull(name, "Task name field cannot be null");
         this.startingDate = startingDate;
         this.assignedEmployee = assignedEmployee;
         this.isLocked = isLocked;
@@ -65,6 +68,10 @@ public class Task implements Cloneable {
     //Required by Optaplanner
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public LocalDate getStartingDate() {
@@ -118,6 +125,7 @@ public class Task implements Cloneable {
     public Task clone(){
         return new Task(
                 getId(),
+                getName(),
                 getStartingDate(),
                 getAssignedEmployee(),
                 isLocked(),
@@ -144,6 +152,7 @@ public class Task implements Cloneable {
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", startingDate=" + startingDate +
                 ", assignedEmployee=" + assignedEmployee +
                 ", isLocked=" + isLocked +

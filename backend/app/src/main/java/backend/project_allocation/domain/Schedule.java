@@ -19,6 +19,10 @@ public class Schedule implements Cloneable {
 
     private Long id;
 
+    private Long version;
+
+    private static Long versionNumber = 1L;
+
     private List<Skill> skillList;
 
     private List<Project> projectList;
@@ -45,8 +49,9 @@ public class Schedule implements Cloneable {
     //Required by Optaplanner
     public Schedule(){}
 
-    public Schedule(Long id, List<Skill> skillList, List<Project> projectList, List<ProjectStage> projectStageList, List<Task> taskList, List<LocalDate> startingDateList, List<Employee> employeeList, ScheduleConstraintConfiguration constraintConfiguration) {
+    public Schedule(Long id, Long version, List<Skill> skillList, List<Project> projectList, List<ProjectStage> projectStageList, List<Task> taskList, List<LocalDate> startingDateList, List<Employee> employeeList, ScheduleConstraintConfiguration constraintConfiguration) {
         this.id = Ensure.notNull(id, "Schedule id field cannot be null");
+        this.version = Ensure.notNull(version, "Schedule version field cannot be null");
         this.skillList = Ensure.notNull(skillList, "Schedule skillList field cannot be null");
         this.projectList = Ensure.notNull(projectList, "Schedule projectList field cannot be null");
         this.projectStageList = Ensure.notNull(projectStageList, "Schedule projectStageList field cannot be null");
@@ -56,8 +61,9 @@ public class Schedule implements Cloneable {
         this.constraintConfiguration = Ensure.notNull(constraintConfiguration, "Schedule constraintConfiguration field cannot be null");
     }
 
-    public Schedule(Long id, List<Skill> skillList, List<Project> projectList, List<ProjectStage> projectStageList, List<Task> taskList, List<LocalDate> startingDateList, List<Employee> employeeList, ScheduleConstraintConfiguration constraintConfiguration, HardMediumSoftScore score) {
+    public Schedule(Long id, Long version, List<Skill> skillList, List<Project> projectList, List<ProjectStage> projectStageList, List<Task> taskList, List<LocalDate> startingDateList, List<Employee> employeeList, ScheduleConstraintConfiguration constraintConfiguration, HardMediumSoftScore score) {
         this.id = Ensure.notNull(id, "Schedule id field cannot be null");
+        this.version = Ensure.notNull(version, "Schedule version field cannot be null");
         this.skillList = Ensure.notNull(skillList, "Schedule skillList field cannot be null");
         this.projectList = Ensure.notNull(projectList, "Schedule projectList field cannot be null");
         this.projectStageList = Ensure.notNull(projectStageList, "Schedule projectStageList field cannot be null");
@@ -74,6 +80,21 @@ public class Schedule implements Cloneable {
     public Long getId() {
         return id;
     }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void incrementVersion() {
+        this.version = versionNumber;
+        versionNumber++;
+    }
+
+    public static void setVersionNumber(Long number) {
+        versionNumber = number;
+    }
+
+    public static Long getVersionNumber(){ return versionNumber; }
 
     public List<Skill> getSkillList() {
         return skillList;
@@ -111,6 +132,7 @@ public class Schedule implements Cloneable {
     public Schedule clone(){
         return new Schedule(
                 getId(),
+                getVersion(),
                 List.copyOf(getSkillList()),
                 List.copyOf(getProjectList()),
                 List.copyOf(getProjectStageList()),
@@ -121,16 +143,33 @@ public class Schedule implements Cloneable {
                 getScore() != null ? HardMediumSoftScore.of(score.hardScore(), score.mediumScore(), score.softScore()) : null
         );
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Schedule schedule = (Schedule) o;
-        return Objects.equals(id, schedule.id);
+        return Objects.equals(id, schedule.id) && Objects.equals(version, schedule.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, version);
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id=" + id +
+                ", version=" + version +
+                ", skillList=" + skillList +
+                ", projectList=" + projectList +
+                ", projectStageList=" + projectStageList +
+                ", constraintConfiguration=" + constraintConfiguration +
+                ", taskList=" + taskList +
+                ", startingDateList=" + startingDateList +
+                ", employeeList=" + employeeList +
+                ", score=" + score +
+                '}';
     }
 }
