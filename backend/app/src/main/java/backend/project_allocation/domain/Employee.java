@@ -4,9 +4,9 @@ import backend.project_allocation.domain.exceptions.Ensure;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
+import java.time.LocalDate;
 import java.util.*;
 
-@PlanningEntity
 public class Employee implements Cloneable {
 
     private String firstname;
@@ -21,13 +21,10 @@ public class Employee implements Cloneable {
 
     private Interval availability;
 
-    @InverseRelationShadowVariable(sourceVariableName = "assignedEmployee")
-    private Set<Task> assignedTasks;
-
     //Required by Optaplanner
     public Employee() {}
 
-    public Employee(String firstname, String lastname, Map<Skill, SkillLevel> competences, double capacityInFTE, List<Task> preferredTasks, Interval availability, Set<Task> assignedTasks) {
+    public Employee(String firstname, String lastname, Map<Skill, SkillLevel> competences, double capacityInFTE, List<Task> preferredTasks, Interval availability) {
         this.firstname = Ensure.notNull(firstname, "Employee firstname field cannot be null");
         this.lastname = Ensure.notNull(lastname, "Employee lastname field cannot be null");
         this.competences = Ensure.notNull(competences, "Employee competences field cannot be null");
@@ -38,7 +35,6 @@ public class Employee implements Cloneable {
         this.capacityInHoursPerWeek = (int)(capacityInFTE * 40);
         this.preferredTasks = Ensure.notNull(preferredTasks, "Employee preferredTasks field cannot be null");
         this.availability = Ensure.notNull(availability, "Employee availability field cannot be null");
-        this.assignedTasks = Ensure.notNull(assignedTasks, "Employee assignedTasks field cannot be null");
     }
 
     // ************************************************************************
@@ -68,15 +64,6 @@ public class Employee implements Cloneable {
         return availability;
     }
 
-    public Set<Task> getAssignedTasks() {
-        return Set.copyOf(assignedTasks);
-    }
-
-    //Required by Optaplanner
-    public void setAssignedTasks(Set<Task> assignedTasks) {
-        this.assignedTasks = assignedTasks;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,8 +85,7 @@ public class Employee implements Cloneable {
                 getCompetences(),
                 getCapacityInHoursPerWeek() / 40.0,
                 getPreferredTasks(),
-                getAvailability(),
-                getAssignedTasks()
+                getAvailability()
         );
     }
 
@@ -112,7 +98,6 @@ public class Employee implements Cloneable {
                 ", capacityInHoursPerWeek=" + capacityInHoursPerWeek +
                 ", preferredTasksSize=" + preferredTasks.size() +
                 ", availability=" + availability +
-                ", assignedTasksSize=" + assignedTasks.size() +
                 '}';
     }
 }
