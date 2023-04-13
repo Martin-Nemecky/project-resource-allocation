@@ -1,10 +1,13 @@
 package backend.project_allocation.services;
 
+import backend.project_allocation.domain.Employee;
 import backend.project_allocation.domain.Schedule;
+import backend.project_allocation.domain.Task;
 import backend.project_allocation.domain.exceptions.Ensure;
 import backend.project_allocation.repositories.ScheduleRepository;
 import backend.project_allocation.solver.SolverBuilder;
 import org.optaplanner.core.api.solver.SolverManager;
+import org.optaplanner.core.api.solver.SolverStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class ScheduleService implements backend.project_allocation.services.Serv
 
     private SolverManager<Schedule, Long> solverManager;
 
+    private Long currentProblemId;
+
     public ScheduleService(@Qualifier("scheduleInMemoryRepository") ScheduleRepository scheduleRepository, SolverBuilder builder) {
         this.scheduleRepository = scheduleRepository;
         this.builder = builder;
@@ -29,9 +34,17 @@ public class ScheduleService implements backend.project_allocation.services.Serv
     public void solveLive(Schedule schedule, Long terminationTimeInMinutes) {
         Ensure.notNull(schedule, "Schedule cannot be null");
 
-        scheduleRepository.clear();
+        if(solverManager != null && currentProblemId != null && solverManager.getSolverStatus(currentProblemId) == SolverStatus.SOLVING_ACTIVE){
+            throw new IllegalArgumentException("There is already a problem to solve. First stop solving the current problem and then post a new one.");
+        }
+
+        if(schedule.getVersion() == 1) {
+            clear();
+        }
+
         save(schedule);
 
+        currentProblemId = schedule.getId();
         solverManager = builder.withTermination(terminationTimeInMinutes).build();
         solverManager.solveAndListen(schedule.getId(), this::findById, this::save);
     }
@@ -54,6 +67,17 @@ public class ScheduleService implements backend.project_allocation.services.Serv
         return optionalSchedule.get();
     }
 
+    public Schedule findByVersion(Long id, Long version){
+        Ensure.notNull(id, "Id cannot be null");
+        Ensure.notNull(version, "Version cannot be null");
+
+        Optional<Schedule> optionalSchedule = scheduleRepository.findByVersion(id, version);
+        if(optionalSchedule.isEmpty())
+            throw new IllegalArgumentException("No solution found with id: " + id + " and version: " + version);
+
+        return optionalSchedule.get();
+    }
+
     public Schedule findBestSolution() {
         Optional<Schedule> optionalSchedule = scheduleRepository.findLast();
 
@@ -71,11 +95,28 @@ public class ScheduleService implements backend.project_allocation.services.Serv
     @Override
     public void save(Schedule entity) {
         Ensure.notNull(entity, "Schedule cannot be null");
-        scheduleRepository.save(entity.clone());
+        Schedule clonedSchedule = entity.clone();
+        clonedSchedule.incrementVersion();
+        scheduleRepository.save(clonedSchedule);
     }
 
     @Override
     public void clear() {
         scheduleRepository.clear();
+        Schedule.setVersionNumber(1L);
+    }
+
+    public int countPreferences(Schedule schedule){
+        List<Task> tasks = schedule.getTaskList();
+
+        int count = 0;
+        for(Task task : tasks){
+            Employee employee = task.getAssignedEmployee();
+            if(employee != null && employee.getPreferredTasks().contains(task)){
+                count++;
+            }
+        }
+
+        return count;
     }
 }
