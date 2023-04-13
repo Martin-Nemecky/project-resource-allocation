@@ -33,6 +33,16 @@ public class ScheduleInMemoryRepository implements ScheduleRepository {
     }
 
     @Override
+    public Optional<Schedule> findByVersion(Long id, Long version){
+        List<Schedule> schedules = db.stream().filter(schedule -> Objects.equals(schedule.getId(), id)).toList();
+        if(schedules.isEmpty()){
+            return Optional.empty();
+        }
+
+        return schedules.stream().filter(schedule -> Objects.equals(schedule.getVersion(), version)).findFirst();
+    }
+
+    @Override
     public void save(Schedule entity) {
         db.add(entity);
     }
@@ -44,7 +54,7 @@ public class ScheduleInMemoryRepository implements ScheduleRepository {
             return optionalSchedule;
         }
 
-        db.remove(optionalSchedule.get());
+        db.removeAll(db.stream().filter(schedule -> Objects.equals(schedule.getId(), id)).toList());
         return optionalSchedule;
     }
 

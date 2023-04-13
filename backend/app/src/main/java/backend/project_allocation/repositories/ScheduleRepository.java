@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface ScheduleRepository extends Repository<Long, Schedule> {
 
     Optional<Schedule> findLast();
+
+    Optional<Schedule> findByVersion(Long id, Long version);
 }
