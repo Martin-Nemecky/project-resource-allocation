@@ -1,9 +1,11 @@
 package backend.project_allocation.rest.converters;
 
+import backend.project_allocation.domain.Employee;
 import backend.project_allocation.domain.ProjectStage;
 import backend.project_allocation.domain.Skill;
 import backend.project_allocation.domain.Task;
 import backend.project_allocation.domain.exceptions.Ensure;
+import backend.project_allocation.rest.dtos.EmployeeDto;
 import backend.project_allocation.rest.dtos.TaskDto;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class TaskConverter {
     public TaskDto toDto(Task task){
         return new TaskDto(
                 task.getId(),
+                task.getName(),
                 task.getProjectStage().getId(),
                 task.getStartingDate(),
                 task.isLocked(),
@@ -37,6 +40,7 @@ public class TaskConverter {
 
         return new Task(
                 taskDto.getId(),
+                taskDto.getName(),
                 taskDto.getStartingDate(),
                 null,
                 taskDto.getIsLocked(),

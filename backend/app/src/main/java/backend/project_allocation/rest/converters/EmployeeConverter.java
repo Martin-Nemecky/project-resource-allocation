@@ -24,7 +24,13 @@ public class EmployeeConverter {
         this.intervalConverter = intervalConverter;
     }
 
-    public EmployeeDto toDto(Employee employee){
+    public EmployeeDto toDto(Employee employee, List<Task> tasks) {
+        List<Task> assignedTasks = new LinkedList<>();
+        for (Task task : tasks) {
+            if (task.getAssignedEmployee() != null && task.getAssignedEmployee().equals(employee)) {
+                assignedTasks.add(task);
+            }
+        }
         return new EmployeeDto(
                 employee.getFirstname(),
                 employee.getLastname(),
@@ -32,7 +38,7 @@ public class EmployeeConverter {
                 employee.getCapacityInHoursPerWeek() / 40.0,
                 taskConverter.toDtoList(employee.getPreferredTasks()).stream().map(TaskDto::getId).collect(Collectors.toList()),
                 intervalConverter.toDto(employee.getAvailability()),
-                taskConverter.toDtoList(employee.getAssignedTasks()).stream().map(TaskDto::getId).collect(Collectors.toList())
+                taskConverter.toDtoList(assignedTasks).stream().map(TaskDto::getId).collect(Collectors.toList())
         );
     }
 
@@ -46,18 +52,24 @@ public class EmployeeConverter {
                 competenceConverter.fromDtoList(employeeDto.getCompetences(), skills),
                 employeeDto.getCapacityInFTE(),
                 employeeDto.getPreferredTaskIds().stream().map(tasks::get).collect(Collectors.toList()),
-                intervalConverter.fromDto(employeeDto.getAvailability()),
-                employeeDto.getAssignedTaskIds().stream().map(tasks::get).collect(Collectors.toSet())
-                );
+                intervalConverter.fromDto(employeeDto.getAvailability())
+        );
 
-        for(Task task : result.getAssignedTasks())
+        for (Long id : employeeDto.getAssignedTaskIds()) {
+            Task task = tasks.get(id);
+            if (task == null) {
+                throw new IllegalArgumentException("Employee " + employeeDto.getFirstname() + " " + employeeDto.getLastname() + " has assigned non-existing task.");
+            }
+
             task.setAssignedEmployee(result);
+        }
+
 
         return result;
     }
 
-    public List<EmployeeDto> toDtoList(List<Employee> employees) {
-        return employees.stream().map(this::toDto).collect(Collectors.toList());
+    public List<EmployeeDto> toDtoList(List<Employee> employees, List<Task> tasks) {
+        return employees.stream().map(employee -> toDto(employee, tasks)).collect(Collectors.toList());
     }
 
     public Set<Employee> fromDtoList(List<EmployeeDto> employeeDtoList, Map<Long, Task> tasks, Map<Long, Skill> skills) {

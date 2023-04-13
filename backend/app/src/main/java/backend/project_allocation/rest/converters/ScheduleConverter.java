@@ -46,6 +46,7 @@ public class ScheduleConverter {
 
         Schedule schedule = new Schedule(
                 scheduleDto.getId(),
+                scheduleDto.getVersion(),
                 skills.values().stream().toList(),
                 projects.values().stream().toList(),
                 stages.values().stream().toList(),
@@ -63,7 +64,7 @@ public class ScheduleConverter {
         List<ProjectDto> projectDtoList = projectConverter.toDtoList(schedule.getProjectList());
         List<ProjectStageDto> projectStageDtoList = projectStageConverter.toDtoList(schedule.getProjectStageList());
         List<TaskDto> taskDtoList = taskConverter.toDtoList(schedule.getTaskList());
-        List<EmployeeDto> employeeDtoList = employeeConverter.toDtoList(schedule.getEmployeeList());
+        List<EmployeeDto> employeeDtoList = employeeConverter.toDtoList(schedule.getEmployeeList(), schedule.getTaskList());
 
         ConfigurationDto configurationDto = null;
         if(schedule.getConstraintConfiguration() != null) {
@@ -85,12 +86,8 @@ public class ScheduleConverter {
             );
         }
 
-        ScoreDto scoreDto = null;
-        if(schedule.getScore() != null){
-            scoreDto = new ScoreDto(schedule.getScore().hardScore(), schedule.getScore().mediumScore(), schedule.getScore().softScore());
-        }
-
-        return new ScheduleDto(schedule.getId(), skillDtoList, projectDtoList, projectStageDtoList, taskDtoList, employeeDtoList, configurationDto, scoreDto);
+        ScoreDto scoreDto = getScoreDto(schedule);
+        return new ScheduleDto(schedule.getId(), schedule.getVersion(), skillDtoList, projectDtoList, projectStageDtoList, taskDtoList, employeeDtoList, configurationDto, scoreDto);
     }
 
     public List<ScheduleDto> toDtoList(List<Schedule> schedules) {
@@ -119,22 +116,12 @@ public class ScheduleConverter {
                 scheduleDto.getConfigurationParameters().getFreeWeekWeight()
         );
     }
-//    private void setConfiguration(Schedule schedule, ConfigurationDto configurationDto){
-//        //hard constraints
-//        schedule.getConstraintConfiguration().setSkillConflict(configurationDto.getSkillLevelWeight());
-//        schedule.getConstraintConfiguration().setOverUtilizationConflict(configurationDto.getHardUtilizationWeight());
-//        schedule.getConstraintConfiguration().setProjectStageConflict(configurationDto.getProjectStageWeight());
-//        schedule.getConstraintConfiguration().setAvailabilityConflict(configurationDto.getAvailabilityWeight());
-//
-//        //medium constraints
-//        schedule.getConstraintConfiguration().setUnassignedTaskConflict(configurationDto.getUnassignedTaskWeight());
-//
-//        //soft constraints
-//        schedule.getConstraintConfiguration().setSkillLevelConflict(configurationDto.getSkillLevelWeight());
-//        schedule.getConstraintConfiguration().setSoftUtilizationConflict(configurationDto.getSoftUtilizationWeight());
-//        schedule.getConstraintConfiguration().setStartingTaskDateDelayConflict(configurationDto.getTaskDelayWeight());
-//        schedule.getConstraintConfiguration().setExceededProjectDeadlineConflict(configurationDto.getDeadlineWeight());
-//        schedule.getConstraintConfiguration().setPreferenceConflict(configurationDto.getPreferenceWeight());
-//        schedule.getConstraintConfiguration().setFreeEmployeeWeeksConflict(configurationDto.getFreeWeekWeight());
-//    }
+
+    public ScoreDto getScoreDto(Schedule schedule) {
+        if(schedule.getScore() != null){
+            return new ScoreDto(schedule.getScore().hardScore(), schedule.getScore().mediumScore(), schedule.getScore().softScore());
+        }
+
+        return null;
+    }
 }
