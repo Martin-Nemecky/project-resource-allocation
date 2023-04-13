@@ -13,6 +13,7 @@ public class TaskTests {
     @DisplayName("Task properties are correctly assigned")
     public void createTask(){
         Long id = 1L;
+        String name = "task";
         boolean isLocked = false;
         int durationInWeeks = 10;
         double requiredCapacityInFTE = 0.5;
@@ -20,9 +21,10 @@ public class TaskTests {
         Project project = new Project(1L, "Project 1", null);
         ProjectStage projectStage = new ProjectStage(1L, "Stage 1", 0, false, project);
 
-        Task task = new Task(id, null, null, isLocked, durationInWeeks, requiredCapacityInFTE, requiredCompetences, projectStage);
+        Task task = new Task(id, name, null, null, isLocked, durationInWeeks, requiredCapacityInFTE, requiredCompetences, projectStage);
 
         assertEquals(id, task.getId());
+        assertEquals(name, task.getName());
         assertNull(task.getStartingDate());
         assertNull(task.getAssignedEmployee());
         assertEquals(isLocked, task.isLocked());
@@ -35,9 +37,28 @@ public class TaskTests {
 
     @Test
     @DisplayName("Creating a task with null id throws IllegalArgumentException")
-    public void createSkillWithNullId(){
+    public void createTaskWithNullId(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Task(
+                    null,
+                    "task",
+                    null,
+                    null,
+                    false,
+                    2,
+                    0.5,
+                    Map.of(),
+                    new ProjectStage(1L, "Stage 1", 0, false, new Project(1L, "Project 1", null))
+            );
+        });
+    }
+
+    @Test
+    @DisplayName("Creating a task with null name throws IllegalArgumentException")
+    public void createTaskWithNullName(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Task(
+                    1L,
                     null,
                     null,
                     null,
@@ -52,10 +73,11 @@ public class TaskTests {
 
     @Test
     @DisplayName("Creating a task with requiredCapacity greater than 1.0 throws IllegalArgumentException")
-    public void createSkillWithWrongCapacity(){
+    public void createTaskWithWrongCapacity(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Task(
                     1L,
+                    "task",
                     null,
                     null,
                     false,
@@ -69,10 +91,11 @@ public class TaskTests {
 
     @Test
     @DisplayName("Creating a task with requiredCapacity smaller than 0.0 throws IllegalArgumentException")
-    public void createSkillWithWrongCapacity2(){
+    public void createTaskWithWrongCapacity2(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Task(
                     1L,
+                    "task",
                     null,
                     null,
                     false,
@@ -86,10 +109,11 @@ public class TaskTests {
 
     @Test
     @DisplayName("Creating a task with null competences throws IllegalArgumentException")
-    public void createSkillWithNullCompetences(){
+    public void createTaskWithNullCompetences(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Task(
                     1L,
+                    "task",
                     null,
                     null,
                     false,
@@ -103,10 +127,11 @@ public class TaskTests {
 
     @Test
     @DisplayName("Creating a task with null projectStage throws IllegalArgumentException")
-    public void createSkillWithNullProjectStage(){
+    public void createTaskWithNullProjectStage(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Task(
                     1L,
+                    "task",
                     null,
                     null,
                     false,

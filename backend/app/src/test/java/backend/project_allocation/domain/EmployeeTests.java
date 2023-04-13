@@ -18,9 +18,8 @@ public class EmployeeTests {
         double capacity = 1.0;
         List<Task> preferences = new ArrayList<>();
         Interval availability = new Interval(LocalDate.now(), null);
-        Set<Task> assignedTasks = new HashSet<>();
 
-        Employee employee = new Employee(firstname, lastname, competences, capacity, preferences, availability, assignedTasks);
+        Employee employee = new Employee(firstname, lastname, competences, capacity, preferences, availability);
 
         assertEquals(firstname, employee.getFirstname());
         assertEquals(lastname, employee.getLastname());
@@ -28,7 +27,6 @@ public class EmployeeTests {
         assertEquals(capacity, employee.getCapacityInHoursPerWeek() / 40.0);
         assertEquals(preferences, employee.getPreferredTasks());
         assertEquals(availability, employee.getAvailability());
-        assertEquals(assignedTasks, employee.getAssignedTasks());
     }
     @Test
     @DisplayName("Creating an employee with capacity greater than 1.0 throws IllegalArgumentException")
@@ -39,8 +37,7 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     5.0,
                     new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -54,8 +51,7 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     -1.0,
                     new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -69,8 +65,7 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     1.0,
                     new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -84,8 +79,7 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     1.0,
                     new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -99,8 +93,7 @@ public class EmployeeTests {
                     null,
                     1.0,
                     new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -114,8 +107,7 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     1.0,
                     null,
-                    new Interval(LocalDate.now(), null),
-                    new HashSet<>()
+                    new Interval(LocalDate.now(), null)
             );
         });
     }
@@ -129,22 +121,6 @@ public class EmployeeTests {
                     Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
                     1.0,
                     new ArrayList<>(),
-                    null,
-                    new HashSet<>()
-            );
-        });
-    }
-
-    @Test
-    @DisplayName("Creating an employee with null assignedTasks throws IllegalArgumentException")
-    public void createEmployeeWithNullAssignedTasks(){
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Employee(
-                    "first", "last",
-                    Map.of(new Skill(1L, "Java"), SkillLevel.JUNIOR),
-                    1.0,
-                    new ArrayList<>(),
-                    new Interval(LocalDate.now(), null),
                     null
             );
         });
@@ -153,8 +129,8 @@ public class EmployeeTests {
     @Test
     @DisplayName("Employees with the same firstname and lastname are equal")
     public void employeesEquity(){
-        Employee employee1 = new Employee("John", "Smith", new HashMap<>(),1.0, new ArrayList<>(), new Interval(LocalDate.now(), null), new HashSet<>());
-        Employee employee2 = new Employee("John", "Smith", new HashMap<>(),0.5, new ArrayList<>(), new Interval(LocalDate.now(), LocalDate.now().plusWeeks(1)), new HashSet<>());
+        Employee employee1 = new Employee("John", "Smith", new HashMap<>(),1.0, new ArrayList<>(), new Interval(LocalDate.now(), null));
+        Employee employee2 = new Employee("John", "Smith", new HashMap<>(),0.5, new ArrayList<>(), new Interval(LocalDate.now(), LocalDate.now().plusWeeks(1)));
 
         assertEquals(true, employee1.equals(employee2));
     }

@@ -13,11 +13,11 @@ public class IntervalTests {
     @DisplayName("Interval properties are correctly assigned")
     public void createInterval(){
         LocalDate now = LocalDate.now();
-        LocalDate firstValue = now, secondValue = now.plusDays(2);
+        LocalDate secondValue = now.plusDays(2);
 
-        Interval interval = new Interval(firstValue, secondValue);
+        Interval interval = new Interval(now, secondValue);
 
-        assertEquals(firstValue, interval.getStart());
+        assertEquals(now, interval.getStart());
         assertEquals(secondValue, interval.getEnd());
     }
 
