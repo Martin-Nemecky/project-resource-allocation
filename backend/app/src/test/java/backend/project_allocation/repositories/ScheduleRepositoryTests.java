@@ -25,7 +25,7 @@ public class ScheduleRepositoryTests {
     @Test
     @DisplayName("Saving new schedule")
     public void saveSchedule(){
-        Schedule schedule = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
 
         scheduleRepository.save(schedule);
 
@@ -37,8 +37,8 @@ public class ScheduleRepositoryTests {
     @Test
     @DisplayName("Retrieving all saved schedules")
     public void findAllSchedules(){
-        Schedule schedule1 = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
-        Schedule schedule2 = new Schedule(2L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26 , 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule1 = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule2 = new Schedule(2L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26 , 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
 
         scheduleRepository.save(schedule1);
         scheduleRepository.save(schedule2);
@@ -53,7 +53,7 @@ public class ScheduleRepositoryTests {
     @DisplayName("Calling findById method with existing id")
     public void findScheduleById(){
         Long id = 1L;
-        Schedule schedule = new Schedule(id, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(id, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
 
         scheduleRepository.save(schedule);
 
@@ -72,7 +72,7 @@ public class ScheduleRepositoryTests {
     @DisplayName("Calling remove method with existing id")
     public void removeScheduleById(){
         Long id = 1L;
-        Schedule schedule = new Schedule(id, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26,  60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule = new Schedule(id, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26,  60,0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
 
         scheduleRepository.save(schedule);
         assertEquals(Optional.of(schedule), scheduleRepository.remove(id));
@@ -88,8 +88,8 @@ public class ScheduleRepositoryTests {
     @Test
     @DisplayName("Clear repository")
     public void clearAllSchedules(){
-        Schedule schedule1 = new Schedule(1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
-        Schedule schedule2 = new Schedule(2L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule1 = new Schedule(1L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
+        Schedule schedule2 = new Schedule(2L, 1L, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new ScheduleConstraintConfiguration(26, 60, 0.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), HardMediumSoftScore.ONE_HARD);
 
         scheduleRepository.save(schedule1);
         scheduleRepository.save(schedule2);
