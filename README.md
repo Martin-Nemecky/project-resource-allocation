@@ -62,7 +62,7 @@ Projects array should define all projects. One project is defined as:
 ```
 
 ## Stages
-Stages array should define all project stages of all defined projects. One project is defined as:
+Stages array should define all project stages of all defined projects. One stage is defined as:
 
 | Key  | Value | Required | Unique | Default Value | Description |
 | :----: | :----: | :----: | :----: | :----: | :---- |
