@@ -165,3 +165,25 @@ Configuration consists of multiple parameters that can determine lenght of the p
 | deadlineWeight | number<br /> (>= 0) | false | false | 1000000 | soft penalization for each week of the task that exceeded deadline of the project |
 | preferenceWeight | number<br /> (>= 0) | false | false | 40 | soft reward for every fulfilled preference of the employee | 
 | freeWeekWeight | number<br /> (>= 0) | false | false | 6 | soft reward for every week that employee is completely free | 
+
+#### Example:
+```json
+{ 
+    "configurationParameters" : {
+        "scheduleLengthInWeeks" : 26,
+        "terminationTimeInMinutes" : 60,
+        "employeePossibleCapacityOverheadInFTE" : 0.1,
+        "skillWeight" : 40,
+        "hardUtilizationWeight" : 1,
+        "projectStageWeight" : 2,
+        "availabilityWeight" : 3,
+        "unassignedTaskWeight" : 40,
+        "skillLevelWeight" : 20,
+        "softUtilizationWeight" : 5,
+        "taskDelayWeight" : 5,
+        "deadlineWeight" : 1000000,
+        "preferenceWeight" : 40,
+        "freeWeekWeight" : 6 
+    }
+}
+```
