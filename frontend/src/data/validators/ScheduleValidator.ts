@@ -156,8 +156,8 @@ function validateConfiguration(config : ConfigurationDto | undefined){
         throw new Error("configuration availabilityWeight cannot be a negative number");
     } else if (config.deadlineWeight !== undefined && config.deadlineWeight < 0){
         throw new Error("configuration deadlineWeight cannot be a negative number");
-    } else if (config.employeePossibleCapacityOverheadInFTE !== undefined && config.employeePossibleCapacityOverheadInFTE < 0){
-        throw new Error("configuration employeePossibleCapacityOverheadInFTE cannot be a negative number");
+    } else if (config.employeePossibleCapacityOverheadInFTE !== undefined && config.employeePossibleCapacityOverheadInFTE < 0 && config.employeePossibleCapacityOverheadInFTE > 1.0){
+        throw new Error("configuration employeePossibleCapacityOverheadInFTE cannot be a negative number or greater than 1.0");
     } else if (config.freeWeekWeight !== undefined && config.freeWeekWeight < 0){
         throw new Error("configuration freeWeekWeight cannot be a negative number");
     } else if (config.hardUtilizationWeight !== undefined && config.hardUtilizationWeight < 0){
@@ -166,7 +166,7 @@ function validateConfiguration(config : ConfigurationDto | undefined){
         throw new Error("configuration preferenceWeight cannot be a negative number");
     } else if (config.projectStageWeight !== undefined && config.projectStageWeight < 0){
         throw new Error("configuration projectStageWeight cannot be a negative number");
-    } else if (config.scheduleLengthInWeeks !== undefined && config.scheduleLengthInWeeks < 0){
+    } else if (config.scheduleLengthInWeeks !== undefined && config.scheduleLengthInWeeks < 1){
         throw new Error("configuration scheduleLengthInWeeks cannot be a negative number");
     } else if (config.skillLevelWeight !== undefined && config.skillLevelWeight < 0){
         throw new Error("configuration skillLevelWeight cannot be a negative number");
@@ -176,7 +176,7 @@ function validateConfiguration(config : ConfigurationDto | undefined){
         throw new Error("configuration softUtilizationWeight cannot be a negative number");
     } else if (config.taskDelayWeight !== undefined && config.taskDelayWeight < 0){
         throw new Error("configuration taskDelayWeight cannot be a negative number");
-    } else if (config.terminationTimeInMinutes !== undefined && config.terminationTimeInMinutes < 0){
+    } else if (config.terminationTimeInMinutes !== undefined && config.terminationTimeInMinutes < 1){
         throw new Error("configuration terminationTimeInMinutes cannot be a negative number");
     } else if (config.unassignedTaskWeight !== undefined && config.unassignedTaskWeight < 0){
         throw new Error("configuration unassignedTaskWeight cannot be a negative number");
