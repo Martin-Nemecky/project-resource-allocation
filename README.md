@@ -1,5 +1,15 @@
 # Project Resource Allocation Tool
-This tool is used to allocate resources to projects according to preferences of the resources and requirements of the projects.
+This tool is used to automatically allocate resources to projects according to preferences of the resources and requirements of the projects. App expects input data in form of a json file (see below).
+
+![App illustration](illustration.png)
+
+## Run project
+```
+git clone https://github.com/Martin-Nemecky/project-resource-allocation.git
+cd project-resource-allocation/
+sudo docker-compose up
+```
+Docker expects that there is a .jar file in the ``backend/RELEASES/`` folder
 
 ## Input data
 The structure of the input data should be as follows:
@@ -26,7 +36,7 @@ Optionally you can add configuration object.
 }
 ```
 
-## Skills
+### Skills
 Skills array should define all skills that will be accessed by employee or task later. One skill is defined as: 
 
 | Key  | Value | Required | Unique | Default Value | Description |
@@ -43,7 +53,7 @@ Skills array should define all skills that will be accessed by employee or task 
 }
 ```
 
-## Projects
+### Projects
 Projects array should define all projects. One project is defined as:
 
 | Key  | Value | Required | Unique | Default Value | Description |
@@ -61,7 +71,7 @@ Projects array should define all projects. One project is defined as:
 }
 ```
 
-## Stages
+### Stages
 Stages array should define all project stages of all defined projects. One stage is defined as:
 
 | Key  | Value | Required | Unique | Default Value | Description |
@@ -81,7 +91,7 @@ Stages array should define all project stages of all defined projects. One stage
 }
 ```
 
-## Tasks
+### Tasks
 
 Tasks array should define all tasks of all defined stages. One task is defined as:
 
@@ -114,7 +124,7 @@ Tasks array should define all tasks of all defined stages. One task is defined a
 }
 ```
 
-## Employees
+### Employees
 
 Employees array should define all employees. One employee is defined as:
 
@@ -146,7 +156,7 @@ Employees array should define all employees. One employee is defined as:
 }
 ```
 
-## Configuration 
+### Configuration 
 Configuration consists of multiple parameters that can determine lenght of the plan, termination time, capacity overshoot or importance of individual constraints. The object is defined as follows: 
 
 | Key  | Value | Required | Unique | Default Value | Description |
@@ -155,18 +165,18 @@ Configuration consists of multiple parameters that can determine lenght of the p
 | terminationTimeInMinutes | number<br /> (> 0) | false | false | 60 | how long should server be planning <br />``client side must be terminated manually``|
 | employeePossibleCapacityOverheadInFTE | number<br /> (>= 0) | false | false | 0.1 | possible employee capacity overshoot in FTE |
 | skillWeight | number<br /> (>= 0) | false | false | 40 | hard penalization for badly assigned task (based on skill) |
-| hardUtilizationWeight | number<br /> (>= 0) | false | false | 1 | hard penalization for badly utilized employee (overutilization) | 
+| hardUtilizationWeight | number<br /> (>= 0) | false | false | 1 | hard penalization for badly utilized employee (overutilization > employeeCapacity + capacityOverhead) | 
 | projectStageWeight | number<br /> (>= 0) | false | false | 2 | hard penalization for task that is scheduled earlier than it should (based on stage the task is in) |
 | availabilityWeight | number<br /> (>= 0) | false | false | 3 | hard penalization for task assigned to an unavailable employee |
 | unassignedTaskWeight | number<br /> (>= 0) | false | false | 40 | medium penalization for unassigned task |
 | skillLevelWeight | number<br /> (>= 0) | false | false | 20 | soft penalization for mismatch in skill level |
-| softUtilizationWeight | number<br /> (>= 0) | false | false | 5 | soft penalization for employee capacity overshoot (but not as high as employeeCapacity + capacityOverhead) |
+| softUtilizationWeight | number<br /> (>= 0) | false | false | 5 | soft penalization for employee capacity overshoot (but not higher than employeeCapacity + capacityOverhead) |
 | taskDelayWeight | number<br /> (>= 0) | false | false | 5 | soft penalization for each week between startingDate of the task and first date of the schedule | 
 | deadlineWeight | number<br /> (>= 0) | false | false | 1000000 | soft penalization for each week of the task that exceeded deadline of the project |
 | preferenceWeight | number<br /> (>= 0) | false | false | 40 | soft reward for every fulfilled preference of the employee | 
 | freeWeekWeight | number<br /> (>= 0) | false | false | 6 | soft reward for every week that employee is completely free | 
 
-#### Example:
+#### Example with default values:
 ```json
 { 
     "configurationParameters" : {
@@ -187,3 +197,18 @@ Configuration consists of multiple parameters that can determine lenght of the p
     }
 }
 ```
+
+## Hints
+- Refresh page before each planning (because of a bug - project colors do not update properly)
+- Recommended waiting time since last schedule was generated is 10 minutes.
+- If planning has not generated a new schedule in a long time (for at least 5 minutes), it has either found the best solution or gotten stuck in a local optimum. There are 4 possibilities what you can do: 
+    - wait a little longer
+    - end solving and save the result (export to file as a json)
+    - run the solving again with the same configuration values (the planning is not deterministic so there is a chance that it will generate a different result)
+    - run the solving with tweaked configuration values
+- If the app does not allocate a task even though there is an available employee, you can force it by setting the task property isLocked to true.
+
+## Used Technologies
+Technologies used in this project are:
+-   Java with Spring Boot, Optaplanner, gradle
+-   Typescript, React, npm
