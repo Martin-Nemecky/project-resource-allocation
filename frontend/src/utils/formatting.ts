@@ -3,6 +3,10 @@ import { findById } from "../services/ItemService";
 import { getProject } from "../services/StageService";
 import { MAX_DATE } from "./constants";
 
+export function formatTime(date : Date) : string {
+    return ("0" + date.getHours()).slice(-2) + ":" + (("0" + (date.getMinutes())).slice(-2)) + ":" + (("0" + (date.getSeconds())).slice(-2));
+}
+
 export function formatDate(date: Date): string {
     return ("0" + date.getDate()).slice(-2) + "." + (("0" + (date.getMonth() + 1)).slice(-2)) + ".";
 }
@@ -56,8 +60,10 @@ export function convertTaskToString(task: TaskDto, skills : SkillDto[], stages: 
     result += "\t rank: " + stage?.rank + "\n";
     result += "\t independent: " + stage?.isIndependent + "\n\n";
 
+    const project = getProject(task.stageId, stages, projects);
     result += "project: \n";
-    result += "\t name: " + getProject(task.stageId, stages, projects).name + "\n\n";
+    result += "\t name: " + project.name + "\n";
+    result += "\t deadline: " + (project.deadline == null ? "none" : project.deadline) +"\n\n";
     result += "competences: ";
     if (task.requiredCompetences === undefined) {
         result += "\n";
