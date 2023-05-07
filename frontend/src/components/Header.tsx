@@ -78,7 +78,7 @@ export default function Header({setLastUpdate} : {setLastUpdate : Dispatch<SetSt
               return formatDateShort(new Date(value));
             }
             return value;
-          }, 2), "data.json");
+          }, 2), "version_" + (scheduleWithPalette.schedule.version || 1) + ".json");
     }
 
     function handleStartSolving() {
