@@ -21,7 +21,8 @@ export function getEndDate(task : TaskDto) : Date {
     }
 
     const start = new Date(task.startingDate);
-    const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (task.durationInWeeks * 7));
+    const end = new Date(start);
+    end.setDate(end.getDate() + task.durationInWeeks * 7);
 
     return end;
 }

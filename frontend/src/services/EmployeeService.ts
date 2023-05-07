@@ -10,6 +10,10 @@ export function getPreferredTasks(preferredTaskIds : number[], tasks : TaskDto[]
     return findByIds<TaskDto>(preferredTaskIds, tasks);
 }
 
+export function isPreferredTask(preferredTaskIds : number[], task : TaskDto) : boolean {
+    return preferredTaskIds.includes(task.id);
+}
+
 export function getPreferenceCount(employees : EmployeeDto[], tasks : TaskDto[]) : number {
     let count = 0;
 

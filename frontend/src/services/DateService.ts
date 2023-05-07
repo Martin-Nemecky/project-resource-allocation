@@ -8,7 +8,7 @@ export function generateDates(lastAcceptableDate : Date): Date[] {
 
     let tmp = new Date(nextMonday);
     while(tmp.getTime() < lastAcceptableDate.getTime()){
-        const item = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate());
+        const item = new Date(tmp);
         dates.push(item);
         tmp = addWeeks(tmp, 1);
     }
@@ -35,7 +35,9 @@ export function getDifferenceInWeeks(a : Date, b : Date) : number {
 }
 
 export function getNextMonday(date : Date) : Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + ((7 - date.getDay() + 1) % 7 || 7));
+    const result = new Date(date);
+    result.setDate(date.getDate() + ((7 - date.getDay() + 1) % 7 || 7));
+    return result;
 }
 
 export function getPreviousMonday(date : Date) : Date {

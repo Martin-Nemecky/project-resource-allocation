@@ -2,7 +2,7 @@ import { EmployeeDto, TaskDto, ScheduleDto } from "../data/dtoTypes";
 import { ColorPalette, getProjectColor } from "../utils/colors";
 import { convertEmployeeToString, convertTaskToString, formatDate, formatName } from "../utils/formatting";
 import { generateDates, getNextMonday, addWeeks, isOverlapping, getDifferenceInWeeks } from "./DateService";
-import { getAssignedTasks, sortEmployees } from "./EmployeeService";
+import { getAssignedTasks, isPreferredTask, sortEmployees } from "./EmployeeService";
 import { getProjectId } from "./StageService";
 import { getEndDate, getLastEndDate, sortTasks } from "./TaskService";
 
@@ -111,7 +111,7 @@ function createGridData(schedule: ScheduleDto, palette: ColorPalette): Tile[][] 
     for (let i = 0; i < employees.length; i++) {
         const employee = employees[i];
         const assignedTasks = getAssignedTasks(employee.assignedTaskIds || [], schedule.tasks);
-        const taskTiles = createTiles(assignedTasks, schedule, palette);
+        const taskTiles = createTiles(assignedTasks, schedule, palette, employee);
 
         if (taskTiles.length === 0) {
             const row = addTaskTilesToEmptyRow([], width);
@@ -138,7 +138,7 @@ function createGridData(schedule: ScheduleDto, palette: ColorPalette): Tile[][] 
     return result;
 }
 
-function createTiles(assignedTasks: TaskDto[], schedule: ScheduleDto, palette: ColorPalette): Tile[][] {
+function createTiles(assignedTasks: TaskDto[], schedule: ScheduleDto, palette: ColorPalette, employee : EmployeeDto): Tile[][] {
     const tiles: Tile[][] = [];
     const sortedTasks = sortTasks(assignedTasks);
 
@@ -180,7 +180,7 @@ function createTiles(assignedTasks: TaskDto[], schedule: ScheduleDto, palette: C
 
         tiles[currentRow].push(
             {
-                display: currentTask.name,
+                display: currentTask.name + (isPreferredTask(employee.preferredTaskIds || [], currentTask) ? " (preference)" : ""),
                 hint: toString(currentTask, schedule),
                 value: currentTask,
                 rowSpan: 1,
