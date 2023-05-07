@@ -55,7 +55,7 @@ public class PreferenceConflictTests {
         task2.setStartingDate(startingDates.get(0));
 
         ScheduleConstraintConfiguration customConfig = new ScheduleConstraintConfiguration(
-                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0
+                26, 60, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0
         );
 
         Schedule solution = new Schedule(
@@ -64,6 +64,6 @@ public class PreferenceConflictTests {
 
         constraintVerifier.verifyThat(ScheduleConstraintProvider::preferenceConflict)
                 .givenSolution(solution)
-                .rewardsWith(2);
+                .rewardsWith(60);
     }
 }
