@@ -5,7 +5,6 @@ import { useSchedule } from "../contexts/ScheduleContext";
 import { useStatus } from "../contexts/StatusContext";
 import { ScheduleDto } from "../data/dtoTypes";
 import { parse } from "../services/ParseService";
-import { formatTime } from "../utils/formatting";
 import HistoryTile from "./HistoryTile";
 
 export default function History({lastUpdate} : {lastUpdate : string}) {
