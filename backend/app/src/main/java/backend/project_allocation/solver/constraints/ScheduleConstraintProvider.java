@@ -5,6 +5,7 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore
 import org.optaplanner.core.api.score.stream.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -236,7 +237,10 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                 .join(ScheduleConstraintConfiguration.class)
                 .reward(
                         HardMediumSoftScore.ONE_SOFT,
-                        (task, config) ->  config.getPreferenceConflict()
+                        (task, config) ->  {
+                            int index = task.getAssignedEmployee().getPreferredTasks().indexOf(task);
+                            return Math.max((int) (config.getPreferenceConflict() * (1.0 / (index + 1))), 1);
+                        }
                 )
                 .asConstraint("Preference conflict");
     }
@@ -268,90 +272,4 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
                 )
                 .asConstraint("Free employee weeks conflict");
     }
-
-    // ************************************************************************
-    // Helper methods
-    // ************************************************************************
-//    public int[] calculateUtilization(Employee entity, int scheduleLengthInWeeks) {
-//        Set<Task> tasks = entity.getAssignedTasks();
-//        int[] weeks = new int[scheduleLengthInWeeks];
-//        LocalDate now = LocalDate.now();
-//        LocalDate nextMonday = now.plusDays(8 - now.getDayOfWeek().getValue());
-//
-//        for (Task task : tasks) {
-//            if (task.getStartingDate() == null) continue;
-//            int idxOfStart = (int) ((task.getStartingDate().toEpochDay() - nextMonday.toEpochDay()) / 7.0);
-//            int idxOfEnd = idxOfStart + task.getDurationInWeeks();
-//
-//            if (idxOfStart < 0) {
-//                idxOfStart = 0;
-//            }
-//            if (idxOfEnd < 0) {
-//                idxOfEnd = 0;
-//            }
-//
-//            if(idxOfStart < scheduleLengthInWeeks) {
-//                weeks[idxOfStart] += task.getRequiredCapacityInHoursPerWeek();
-//            }
-//
-//            if (idxOfEnd < scheduleLengthInWeeks) {
-//                weeks[idxOfEnd] -= task.getRequiredCapacityInHoursPerWeek();
-//            }
-//        }
-//        int[] capacities = new int[scheduleLengthInWeeks];
-//        int traverse = 0;
-//        for (int i = 0; i < scheduleLengthInWeeks; i++) {
-//            traverse += weeks[i];
-//            capacities[i] = traverse;
-//        }
-//
-//        return capacities;
-//    }
-//
-//    public int calculateSoftUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
-//        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
-//
-//        int count = 0;
-//        for (int capacity : capacities) {
-//            if (capacity > employee.getCapacityInHoursPerWeek() && capacity <= employee.getCapacityInHoursPerWeek() + capacityOverhead) {
-//                count += capacity - employee.getCapacityInHoursPerWeek();
-//            }
-//        }
-//
-//        return count;
-//    }
-//
-//    public int calculateHardUtilization(Employee employee, int capacityOverhead, int scheduleLengthInWeeks) {
-//        int[] capacities = calculateUtilization(employee, scheduleLengthInWeeks);
-//
-//        int count = 0;
-//        for (int capacity : capacities) {
-//            if (capacity > employee.getCapacityInHoursPerWeek() + capacityOverhead) {
-//                count += capacity - employee.getCapacityInHoursPerWeek() - capacityOverhead;
-//            }
-//        }
-//
-//        return count;
-//    }
-//
-//    public int calculateIntervalOffset(Pair<Interval, Interval> entity) {
-//        Interval outer = entity.getFirst();
-//        Interval inner = entity.getSecond();
-//
-//        int startOffset = (int) ((outer.getStart().toEpochDay() - inner.getStart().toEpochDay()) / 7);
-//        int endOffset = (int) ((inner.getEnd().toEpochDay() - outer.getEnd().toEpochDay()) / 7);
-//
-//        if (startOffset < 0 && endOffset < 0)
-//            return 0;
-//        else if (startOffset < 0 && endOffset > 0)
-//            return endOffset;
-//        else if (startOffset > 0 && endOffset < 0)
-//            return startOffset;
-//        else
-//            return startOffset + endOffset;
-//    }
-//
-//    public boolean isOverlapping(Interval a, Interval b){
-//        return !a.getStart().isAfter(b.getEnd()) && !b.getStart().isAfter(a.getEnd());
-//    }
 }
