@@ -1,4 +1,4 @@
 FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
-COPY app/build/libs/app.jar app.jar
+COPY RELEASES/version_1.0.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
