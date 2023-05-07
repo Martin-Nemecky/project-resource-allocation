@@ -9,7 +9,8 @@ git clone https://github.com/Martin-Nemecky/project-resource-allocation.git
 cd project-resource-allocation/
 sudo docker-compose up
 ```
-Docker expects that there is a .jar file in the ``backend/RELEASES/`` folder
+You can then see running app on http://localhost:3000/. <br/>
+Note: Docker expects that there is a version_1.jar file in the ``backend/RELEASES/`` folder.
 
 ## Input data
 The structure of the input data should be as follows:
