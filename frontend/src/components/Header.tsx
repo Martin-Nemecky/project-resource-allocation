@@ -4,12 +4,12 @@ import { download } from "../file/FileHandler";
 import { initialSchedule, useSchedule } from "../contexts/ScheduleContext";
 import { getLastPreview, solve, stopSolving } from "../api/api";
 import { useStatus } from "../contexts/StatusContext";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useScheduleHistory } from "../contexts/HistoryContext";
 import { isBetterThan, isSame } from "../services/ScheduleService";
-import { formatDateShort } from "../utils/formatting";
+import { formatDateShort, formatTime } from "../utils/formatting";
 
-export default function Header() {
+export default function Header({setLastUpdate} : {setLastUpdate : Dispatch<SetStateAction<string>>}) {
     const [isRunning, setIsRunning] = useState(false);
     const { scheduleWithPalette } = useSchedule();
     const { setStatus } = useStatus();
@@ -44,6 +44,7 @@ export default function Header() {
                 function (result) {
                     if (! isSame(result.data.score, scheduleScore.current)) {
                         const preview = result.data;
+                        setLastUpdate(formatTime(new Date()));
                         scheduleHistoryFn.current(prev => { return { current: preview, previews: [preview, ...prev.previews] } });
                     }
                 },

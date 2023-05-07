@@ -12,6 +12,7 @@ export default function ScheduleTable() {
         setGrid(result);
     }, [scheduleWithPalette]);
 
+
     return (
         <>
             <div className="table-responsive">

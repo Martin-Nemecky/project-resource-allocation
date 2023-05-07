@@ -10,10 +10,11 @@ import { getProjectId, getProject } from "./services/StageService";
 import { getProjectColor } from "./utils/colors";
 import { findById } from "./services/ItemService";
 import { ProjectStageDto } from "./data/dtoTypes";
-import { convertCompetencesToStringShort, convertTaskToString } from "./utils/formatting";
+import { convertCompetencesToStringShort, convertTaskToString, formatTime } from "./utils/formatting";
 
 function App() {
   const [tiles, setTiles] = useState<ReactNode[]>([]);
+  const [lastUpdate, setLastUpdate] = useState(formatTime(new Date()));
   const { scheduleWithPalette } = useSchedule();
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function App() {
   return (
     <div className="d-flex flex-column h-100 w-100">
       <div>
-        <Header />
+        <Header setLastUpdate={setLastUpdate}/>
       </div>
 
       <div>
@@ -82,7 +83,7 @@ function App() {
             </div>
           </div>
           <div className="col-lg-3 col-md-4 bg-secondary h-100 p-3 overflow-auto">
-            <History />
+            <History lastUpdate={lastUpdate}/>
           </div>
         </div>
       </div>

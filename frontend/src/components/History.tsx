@@ -5,9 +5,10 @@ import { useSchedule } from "../contexts/ScheduleContext";
 import { useStatus } from "../contexts/StatusContext";
 import { ScheduleDto } from "../data/dtoTypes";
 import { parse } from "../services/ParseService";
+import { formatTime } from "../utils/formatting";
 import HistoryTile from "./HistoryTile";
 
-export default function History() {
+export default function History({lastUpdate} : {lastUpdate : string}) {
     const { scheduleHistory, setScheduleHistory } = useScheduleHistory();
     const { setScheduleWithPalette } = useSchedule();
     const { setStatus } = useStatus();
@@ -38,6 +39,7 @@ export default function History() {
     return (
         <div className="d-flex flex-column h-100">
             <h2 className="text-center text-light">History</h2>
+            <h5 className="text-center text-light">{"(last update at " + lastUpdate + ")"}</h5>
             {scheduleHistory.previews.map((preview, idx) => {
                 return (
                     <HistoryTile key={idx} preview={preview} setScheduleHistory={setScheduleHistory} isSelected={scheduleHistory.current === preview} />
