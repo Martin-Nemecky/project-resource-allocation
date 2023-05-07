@@ -63,7 +63,7 @@ export function convertTaskToString(task: TaskDto, skills : SkillDto[], stages: 
     const project = getProject(task.stageId, stages, projects);
     result += "project: \n";
     result += "\t name: " + project.name + "\n";
-    result += "\t deadline: " + (project.deadline == null ? "none" : project.deadline) +"\n\n";
+    result += "\t deadline: " + (project.deadline == null ? "none" : formatFullDate(project.deadline)) +"\n\n";
     result += "competences: ";
     if (task.requiredCompetences === undefined) {
         result += "\n";
