@@ -70,7 +70,7 @@ export default function Header({setLastUpdate} : {setLastUpdate : Dispatch<SetSt
             clearInterval(myTimer.current);
             myTimer.current = undefined;
         }
-    }, [isRunning]);
+    }, [isRunning, setLastUpdate]);
 
     function handleDownload() {
         download(JSON.stringify(scheduleWithPalette.schedule, function(key, value) {
