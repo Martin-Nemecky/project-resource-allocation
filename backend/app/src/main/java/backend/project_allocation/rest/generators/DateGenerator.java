@@ -23,4 +23,9 @@ public class DateGenerator implements Generator<List<LocalDate>>{
 
         return result;
     }
+
+    @Override
+    public void generate(){
+
+    }
 }

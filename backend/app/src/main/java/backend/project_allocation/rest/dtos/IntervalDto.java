@@ -1,15 +1,28 @@
 package backend.project_allocation.rest.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class IntervalDto {
 
+// uncomment following lines when generating testing data by DataGenerator
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @JsonSerialize(using = LocalDateSerializer.class)
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate start;
 
+// uncomment following lines when generating testing data by DataGenerator
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @JsonSerialize(using = LocalDateSerializer.class)
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate end = LocalDate.MAX;
 
     public IntervalDto() {}

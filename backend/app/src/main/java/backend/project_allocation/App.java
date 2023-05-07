@@ -3,12 +3,15 @@
  */
 package backend.project_allocation;
 
+import backend.project_allocation.rest.generators.DataGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
+        // To generate testing data to resources directory uncomment the following line
+        //new DataGenerator().generate();
         SpringApplication.run(App.class, args);
     }
 }
