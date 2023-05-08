@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PreviewDto, ScheduleDto } from "../data/dtoTypes";
 
-const url = "http://localhost:8080/schedule";
+const url = process.env.REACT_APP_SERVER_URL + "/schedule";
 
 export function solve(schedule : ScheduleDto) {
     return axios.post<PreviewDto>(url, schedule);

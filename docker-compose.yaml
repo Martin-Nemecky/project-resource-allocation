@@ -4,11 +4,16 @@ services:
     build: ./backend
     container_name: backend_c
     ports:
-      - '8080:8080'
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
   frontend:
     build: ./frontend
     container_name: frontend_c
     ports:
-      - '3000:3000'
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    environment:
+      - SERVER_URL=${SERVER_URL}
+      - CLIENT_PORT=${CLIENT_PORT}
     stdin_open: true
     tty: true
