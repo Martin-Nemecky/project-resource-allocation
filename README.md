@@ -9,7 +9,7 @@ git clone https://github.com/Martin-Nemecky/project-resource-allocation.git
 cd project-resource-allocation/
 sudo docker-compose up
 ```
-You can then see running app on http://localhost:3000/. <br/>
+You can then see running app on http://localhost:3001/. You can modify the port in the .env file (in the root directory) <br/>
 Note: Docker expects that there is a version_1.jar file in the ``backend/RELEASES/`` folder.
 
 ## Input data
