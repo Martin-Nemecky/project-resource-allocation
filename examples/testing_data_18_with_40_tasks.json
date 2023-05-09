@@ -1,0 +1,803 @@
+{
+  "skills" : [ {
+    "id" : 1,
+    "name" : "Java"
+  }, {
+    "id" : 2,
+    "name" : "Node.js"
+  }, {
+    "id" : 3,
+    "name" : "React"
+  }, {
+    "id" : 4,
+    "name" : "C++"
+  } ],
+  "projects" : [ {
+    "id" : 1,
+    "name" : "P1",
+    "deadline" : "+999999999-12-31"
+  }, {
+    "id" : 3,
+    "name" : "P3",
+    "deadline" : "2024-02-12"
+  }, {
+    "id" : 2,
+    "name" : "P2",
+    "deadline" : "2023-09-20"
+  }, {
+    "id" : 4,
+    "name" : "P4",
+    "deadline" : "+999999999-12-31"
+  }, {
+    "id" : 7,
+    "name" : "P7",
+    "deadline" : "+999999999-12-31"
+  } ],
+  "stages" : [ {
+    "id" : 1,
+    "projectId" : 1,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 2,
+    "projectId" : 1,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 3,
+    "projectId" : 1,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 4,
+    "projectId" : 1,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  }, {
+    "id" : 5,
+    "projectId" : 2,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 6,
+    "projectId" : 2,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 7,
+    "projectId" : 2,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 8,
+    "projectId" : 2,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  }, {
+    "id" : 9,
+    "projectId" : 3,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 10,
+    "projectId" : 3,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 11,
+    "projectId" : 3,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 12,
+    "projectId" : 3,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  }, {
+    "id" : 13,
+    "projectId" : 4,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 14,
+    "projectId" : 4,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 15,
+    "projectId" : 4,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 16,
+    "projectId" : 4,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  }, {
+    "id" : 25,
+    "projectId" : 7,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 26,
+    "projectId" : 7,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 27,
+    "projectId" : 7,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  } ],
+  "tasks" : [ {
+    "id" : 14,
+    "name" : "T14",
+    "stageId" : 5,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 27,
+    "name" : "T27",
+    "stageId" : 9,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 4,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 15,
+    "name" : "T15",
+    "stageId" : 5,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 18,
+    "name" : "T18",
+    "stageId" : 6,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 78,
+    "name" : "T78",
+    "stageId" : 26,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 73,
+    "name" : "T73",
+    "stageId" : 25,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 30,
+    "name" : "T30",
+    "stageId" : 10,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 38,
+    "name" : "T38",
+    "stageId" : 13,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 43,
+    "name" : "T43",
+    "stageId" : 15,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ ]
+  }, {
+    "id" : 41,
+    "name" : "T41",
+    "stageId" : 14,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 16,
+    "name" : "T16",
+    "stageId" : 6,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 10,
+    "name" : "T10",
+    "stageId" : 4,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 40,
+    "name" : "T40",
+    "stageId" : 14,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 24,
+    "name" : "T24",
+    "stageId" : 8,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 8,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 22,
+    "name" : "T22",
+    "stageId" : 8,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 21,
+    "name" : "T21",
+    "stageId" : 7,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 7,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 3,
+    "name" : "T3",
+    "stageId" : 1,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 6,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 34,
+    "name" : "T34",
+    "stageId" : 12,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ ]
+  }, {
+    "id" : 6,
+    "name" : "T6",
+    "stageId" : 2,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 9,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 33,
+    "name" : "T33",
+    "stageId" : 11,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 17,
+    "name" : "T17",
+    "stageId" : 6,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 75,
+    "name" : "T75",
+    "stageId" : 25,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 1,
+    "name" : "T1",
+    "stageId" : 1,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ ]
+  }, {
+    "id" : 45,
+    "name" : "T45",
+    "stageId" : 15,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 36,
+    "name" : "T36",
+    "stageId" : 12,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 9,
+    "name" : "T9",
+    "stageId" : 3,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 8,
+    "name" : "T8",
+    "stageId" : 3,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 26,
+    "name" : "T26",
+    "stageId" : 9,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 39,
+    "name" : "T39",
+    "stageId" : 13,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 80,
+    "name" : "T80",
+    "stageId" : 27,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 46,
+    "name" : "T46",
+    "stageId" : 16,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 79,
+    "name" : "T79",
+    "stageId" : 27,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ ]
+  }, {
+    "id" : 5,
+    "name" : "T5",
+    "stageId" : 2,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 28,
+    "name" : "T28",
+    "stageId" : 10,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 4,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 31,
+    "name" : "T31",
+    "stageId" : 11,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 4,
+    "name" : "T4",
+    "stageId" : 2,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 37,
+    "name" : "T37",
+    "stageId" : 13,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 74,
+    "name" : "T74",
+    "stageId" : 25,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 4,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 48,
+    "name" : "T48",
+    "stageId" : 16,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 47,
+    "name" : "T47",
+    "stageId" : 16,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "JUNIOR"
+    } ]
+  } ],
+  "employees" : [ {
+    "firstname" : "E12",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 0.5,
+    "preferredTaskIds" : [ 17 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E7",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 15 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E14",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "INTERMEDIATE"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 74 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E5",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 34 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E25",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 5 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E1",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 30 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E23",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 37 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E18",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 0.5,
+    "preferredTaskIds" : [ 43 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E22",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ],
+    "capacityInFTE" : 0.5,
+    "preferredTaskIds" : [ 28 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E3",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 3,
+      "skillLevel" : "INTERMEDIATE"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 79 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  } ]
+}

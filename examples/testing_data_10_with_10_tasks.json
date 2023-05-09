@@ -1,0 +1,243 @@
+{
+  "skills" : [ {
+    "id" : 1,
+    "name" : "Java"
+  }, {
+    "id" : 2,
+    "name" : "Node.js"
+  }, {
+    "id" : 3,
+    "name" : "React"
+  }, {
+    "id" : 4,
+    "name" : "C++"
+  } ],
+  "projects" : [ {
+    "id" : 2,
+    "name" : "P2",
+    "deadline" : "2023-09-20"
+  }, {
+    "id" : 1,
+    "name" : "P1",
+    "deadline" : "+999999999-12-31"
+  } ],
+  "stages" : [ {
+    "id" : 1,
+    "projectId" : 1,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 2,
+    "projectId" : 1,
+    "name" : "Implementation",
+    "rank" : 2,
+    "isIndependent" : false
+  }, {
+    "id" : 3,
+    "projectId" : 1,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 4,
+    "projectId" : 1,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  }, {
+    "id" : 5,
+    "projectId" : 2,
+    "name" : "Analysis",
+    "rank" : 1,
+    "isIndependent" : false
+  }, {
+    "id" : 7,
+    "projectId" : 2,
+    "name" : "Testing",
+    "rank" : 3,
+    "isIndependent" : false
+  }, {
+    "id" : 8,
+    "projectId" : 2,
+    "name" : "General",
+    "rank" : 4,
+    "isIndependent" : true
+  } ],
+  "tasks" : [ {
+    "id" : 7,
+    "name" : "T7",
+    "stageId" : 3,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 5,
+    "name" : "T5",
+    "stageId" : 2,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 5,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 4,
+    "name" : "T4",
+    "stageId" : 2,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "INTERMEDIATE"
+    } ]
+  }, {
+    "id" : 2,
+    "name" : "T2",
+    "stageId" : 1,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 9,
+    "name" : "T9",
+    "stageId" : 3,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 1,
+    "requiredCapacityInFTE" : 0.75,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 22,
+    "name" : "T22",
+    "stageId" : 8,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 2,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "INTERMEDIATE"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "JUNIOR"
+    } ]
+  }, {
+    "id" : 14,
+    "name" : "T14",
+    "stageId" : 5,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 3,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 21,
+    "name" : "T21",
+    "stageId" : 7,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 7,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 23,
+    "name" : "T23",
+    "stageId" : 8,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 6,
+    "requiredCapacityInFTE" : 0.5,
+    "requiredCompetences" : [ {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ]
+  }, {
+    "id" : 11,
+    "name" : "T11",
+    "stageId" : 4,
+    "startingDate" : null,
+    "isLocked" : false,
+    "durationInWeeks" : 6,
+    "requiredCapacityInFTE" : 1.0,
+    "requiredCompetences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "SENIOR"
+    } ]
+  } ],
+  "employees" : [ {
+    "firstname" : "E14",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "JUNIOR"
+    }, {
+      "skillId" : 2,
+      "skillLevel" : "INTERMEDIATE"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 9 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E10",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 1,
+      "skillLevel" : "SENIOR"
+    }, {
+      "skillId" : 4,
+      "skillLevel" : "SENIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 2 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  }, {
+    "firstname" : "E9",
+    "lastname" : "",
+    "competences" : [ {
+      "skillId" : 3,
+      "skillLevel" : "SENIOR"
+    } ],
+    "capacityInFTE" : 1.0,
+    "preferredTaskIds" : [ 11 ],
+    "availability" : {
+      "start" : "2023-05-03",
+      "end" : "+999999999-12-31"
+    },
+    "assignedTaskIds" : [ ]
+  } ]
+}
