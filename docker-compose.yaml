@@ -13,7 +13,7 @@ services:
     ports:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
     environment:
-      - SERVER_URL=${SERVER_URL}
+      - SERVER_URL=http://localhost:${SERVER_PORT}
       - CLIENT_PORT=${CLIENT_PORT}
     stdin_open: true
     tty: true
