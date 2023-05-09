@@ -13,6 +13,11 @@ You can see the running app on the page http://localhost:3001/. You can modify t
 Note: Docker expects that there is a version_1.jar file in the ``backend/RELEASES/`` folder. <br/>
 Note: Use --build -d tags with docker compose to run the app.
 
+## Stop project 
+```
+sudo docker compose down
+```
+
 ## Input data
 The structure of the input data should be as follows:
 
