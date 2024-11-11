@@ -37,8 +37,8 @@ export default function History({lastUpdate} : {lastUpdate : string}) {
 
     return (
         <div className="d-flex flex-column h-100">
-            <h2 className="text-center text-light">History</h2>
-            <h5 className="text-center text-light">{"(last update at " + lastUpdate + ")"}</h5>
+            <h2 className="text-center">History</h2>
+            <h5 className="text-center">{"(last update at " + lastUpdate + ")"}</h5>
             {scheduleHistory.previews.map((preview, idx) => {
                 return (
                     <HistoryTile key={idx} preview={preview} setScheduleHistory={setScheduleHistory} isSelected={scheduleHistory.current === preview} />

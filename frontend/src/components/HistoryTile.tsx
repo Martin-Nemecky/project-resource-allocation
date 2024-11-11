@@ -17,7 +17,7 @@ export default function HistoryTile({ preview, setScheduleHistory, isSelected }:
     }
 
     return (
-        <table className={"table table-bordered " + (isSelected ? "table-light border border-dark" : "table-dark")} onClick={handleClick}>
+        <table className={"table table-bordered " + (isSelected ? "table-light border border-dark" : "table-secondary")} onClick={handleClick}>
 
             <thead >
                 <tr className="text-center">

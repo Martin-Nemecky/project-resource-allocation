@@ -82,7 +82,7 @@ function App() {
               }
             </div>
           </div>
-          <div className="col-lg-3 col-md-4 bg-secondary h-100 p-3 overflow-auto">
+          <div className="col-lg-3 col-md-4 h-100 p-3 overflow-auto border border-top-0 border-2 border-dark">
             <History lastUpdate={lastUpdate}/>
           </div>
         </div>
